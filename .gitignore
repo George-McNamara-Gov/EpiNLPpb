@@ -1,0 +1,12 @@
+# ignore the .vscode and the model/POLYFINAL-NLP-PROGRAM directories
+.vscode
+model/POLYFINAL-NLP-PROGRAM
+
+# ignore ALL __pycache__ directories
+__pycache__
+
+# ignore ALL .csv, .xls, .xlsx and .pkl files
+*.csv
+*.xls
+*.xlsx
+*.pkl
