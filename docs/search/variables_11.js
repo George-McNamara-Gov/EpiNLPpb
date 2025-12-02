@@ -1,7 +1,7 @@
 var searchData=
 [
-  ['universal_5ftags_0',['UNIVERSAL_TAGS',['../namespace_epi_n_l_ppb_1_1package_1_1vectorise_1_1constants.html#a878a0613caac35dccc9a7d4529280f6d',1,'EpiNLPpb::package::vectorise::constants']]],
-  ['updateavailablerecords_1',['updateAvailableRecords',['../class_epi_n_l_ppb_1_1gui_1_1build_1_1extract_1_1_extract.html#a542fada497d2c6ab75cd6bd2fd7fbce4',1,'EpiNLPpb::gui::build::extract::Extract']]],
-  ['usealldatafunc_2',['useAllDataFunc',['../class_epi_n_l_ppb_1_1gui_1_1build_1_1filter_1_1_filter.html#af543f8c4dbc2fdc97ee02f8d1fb57653',1,'EpiNLPpb::gui::build::filter::Filter']]],
-  ['username_3',['username',['../namespace_epi_n_l_ppb_1_1nltk__install__proxy.html#a68a10c14ccf6f33b07dbcd92f20f465e',1,'EpiNLPpb::nltk_install_proxy']]]
+  ['vectorise_0',['vectorise',['../class_epi_n_l_ppb_1_1package_1_1base_1_1_n_l_p.html#a058c0f04a5a79eeb24a389caeaf920e2',1,'EpiNLPpb::package::base::NLP']]],
+  ['vectoriser_1',['vectoriser',['../class_epi_n_l_ppb_1_1package_1_1vectorise_1_1vectorise_1_1_vectorise.html#acb9f1c3cac69e1b92dcab8ba279d0c5a',1,'EpiNLPpb::package::vectorise::vectorise::Vectorise']]],
+  ['vectspace_2',['vectSpace',['../class_epi_n_l_ppb_1_1package_1_1base_1_1_n_l_p.html#ae361e69e676553d237cb2a12b85fe60f',1,'EpiNLPpb::package::base::NLP']]],
+  ['vecttime_3',['vectTime',['../class_epi_n_l_ppb_1_1package_1_1base_1_1_n_l_p.html#a93511ce25b38e749f0e7f9d5c01beff4',1,'EpiNLPpb::package::base::NLP']]]
 ];

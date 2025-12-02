@@ -166,40 +166,28 @@ class TestNLTKVectorise(unittest.TestCase):
         self.assertEqual(nv.reconstruct(tokens4), recon4)
 
     def test_bagOfWords(self):
-        trainRecords = [[0,0,0,0,'','',0],
-                        [0,0,0,0,
-                         'The quick brown','fox jumps over the lazy dog',0],
-                        [0,0,0,0,'She sells sea','shells by the sea shore',0]]
-        testRecords = [[0,0,0,0,
-                        'Peter piper picked a peck','of pickled peppers',0],
-                       [0,0,0,0,'Red leather','yellow leather',0]]
+        trainRecords = [['','',0],
+                        ['The quick brown','fox jumps over the lazy dog',0],
+                        ['She sells sea','shells by the sea shore',0]]
+        testRecords = [['Peter piper picked a peck','of pickled peppers',0],
+                       ['Red leather','yellow leather',0]]
         trainVecs, testVecs, _ = nv.bagOfWords(trainRecords, testRecords, 
-                                               'COUNT', True, [4,5])
+                                               'COUNT', True, (1,1))
         self.assertEqual(len(trainRecords), trainVecs.shape[0])
         self.assertEqual(len(testRecords), testVecs.shape[0])
 
         trainVecs, testVecs, _ = nv.bagOfWords(trainRecords, testRecords, 
-                                               'COUNT', False, [4,5])
+                                               'COUNT', False, (1,1))
         self.assertEqual(len(trainRecords), trainVecs.shape[0])
         self.assertEqual(len(testRecords), testVecs.shape[0])
 
         trainVecs, testVecs, _ = nv.bagOfWords(trainRecords, testRecords, 
-                                               'FREQ', True, [4,5])
+                                               'FREQ', True, (1,1))
         self.assertEqual(len(trainRecords), trainVecs.shape[0])
         self.assertEqual(len(testRecords), testVecs.shape[0])
 
         trainVecs, testVecs, _ = nv.bagOfWords(trainRecords, testRecords, 
-                                               'FREQ', False, [4,5])
-        self.assertEqual(len(trainRecords), trainVecs.shape[0])
-        self.assertEqual(len(testRecords), testVecs.shape[0])
-        
-        trainVecs, testVecs, _ = nv.bagOfWords(trainRecords, testRecords, 
-                                               'HASH', True, [4,5])
-        self.assertEqual(len(trainRecords), trainVecs.shape[0])
-        self.assertEqual(len(testRecords), testVecs.shape[0])
-
-        trainVecs, testVecs, _ = nv.bagOfWords(trainRecords, testRecords, 
-                                               'HASH', False, [4,5])
+                                               'FREQ', False, (1,1))
         self.assertEqual(len(trainRecords), trainVecs.shape[0])
         self.assertEqual(len(testRecords), testVecs.shape[0])
 

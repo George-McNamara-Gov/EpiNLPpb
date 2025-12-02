@@ -20,7 +20,6 @@ Exceptions:
 import unittest
 
 from ..package.vectorise import vectorise as v
-from ..package.vectorise import base as b
 from ..package import exceptions as e
 
 class TestVectorise(unittest.TestCase):
@@ -42,291 +41,257 @@ class TestVectorise(unittest.TestCase):
     test_tokLAWithNoTok()
         Tests that providing a token level LA technique without a tokeniser
         raises an exception.
-    test_keyWordCheck()
-        Tests that keyWordCheck identifies the correct terms.
     test_tokeniserNameError()
         Tests that providing an invalid tokeniser raise an exception.
     test_preLANameError()
-        Tests that providing invalid preLA techniques raises an exception.
+        Tests that providing invalid pre LA techniques raises an exception.
     test_tokenLevelLANameError()
         Tests that providing invalid token LA techniques raises an exception.
     test_textLevelLANameError()
         Tests that providing invalid text LA techniques raises an exception.
     test_corpusLevelLANameError()
         Tests that providing invalid corpus LA techniques raises an exception.
-    test_builderVectorPreLA()
+    test_ngramRangeError()
+        Tests that providing invalid ngramRange input raises an exception.
+    test_buildVectorPreLA()
         Tests that building a vector with preLA produces vectors of the same 
         length.
-    test_builderVectorTokeniser()
+    test_buildVectorTokeniser()
         Tests that building a vector with tokenisers produces vectors of the 
         same length.
-    test_builderVectorTokenLevel()
+    test_buildVectorTokenLevel()
         Tests that building a vector with token level LA produces vectors of the 
         same length.
-    test_builderVectorTextLevel()
+    test_buildVectorTextLevel()
         Tests that building a vector with text level LA produces vectors of the 
         same length.
     test_buildVector()
         Tests that build vector produces vectors of the same length.
     test_recordToVector()
-        Tests that recordToVecotr produces vectors of the same length.
+        Tests that recordToVector produces vectors of the same length.
     test_vectorise()
         Tests that vectorise produces the correct number of vectors and vectors 
         of the same length.
     '''
     
     def test_noError(self):
-        vc = v.Vectorise('WORD_TOKENISER', 
-                         ['REMOVE_STOPWORDS'],
-                         [],
-                         ['KEYWORDS'],
-                         '',
-                         [4,5])
+        vc = v.Vectorise(tokeniser= 'WORD_TOKENISER', 
+                         preLAChanges= ['REMOVE_STOPWORDS'],
+                         tokenLevelLA= [],
+                         textLevelLA= ['KEYWORDS'],
+                         corpusLevelLA= '',
+                         ngramRange= (1,3))
         text = 'The-quick brown, fox "jumps" over the lazy dog.'
         _ = vc.buildVector(text)
-        record = [0,0,0,0,0,'The quick brown','fox jumps over',0]
+        record = ['The quick brown','fox jumps over',0]
+        _ = vc.recordToVector(record)
+
+        args = {
+            'tokeniser' : 'WORD_TOKENISER',
+            'preLAChanges' : ['REMOVE_STOPWORDS'],
+            'tokenLevelLA' : [],
+            'textLevelLA' : ['KEYWORDS'],
+            'corpusLevelLA' : '',
+            'ngramRange' : (1, 3)
+        }
+        vc = v.Vectorise(arg_dict= args)
+        text = 'The-quick brown, fox "jumps" over the lazy dog.'
+        _ = vc.buildVector(text)
+        record = ['The quick brown','fox jumps over',0]
         _ = vc.recordToVector(record)
 
     def test_noTechniquesError(self):
-        with self.assertRaises(e.NoLATechniquesException):
-            _ = v.Vectorise('WORD_TOKENISER', 
-                         ['REMOVE_STOPWORDS'],
-                         [],
-                         [],
-                         '',
-                         [4,5])
+        with self.assertRaises(e.PreLAException):
+            _ = v.Vectorise(tokeniser= 'WORD_TOKENISER', 
+                         preLAChanges= ['REMOVE_STOPWORDS'],
+                         tokenLevelLA= [],
+                         textLevelLA= [],
+                         corpusLevelLA= '')
 
     def test_tokLAWithNoTok(self):
-        with self.assertRaises(e.NoTokeniserException):
-            _ = v.Vectorise('', 
-                         [],
-                         ['POS_TAG'],
-                         [],
-                         '',
-                         [4,5])
-            
-    def test_keyWordCheck(self):
-        text1 = 'Example text 1 with no key words'
-        text2 = 'Example text 2 with one key word tos'
-        text3 = 'monox Example text 3 with multiple key words od.'
-        text4 = 'cutting Example text 4 with split key word self harm'
-        for value in b.keyWordCheck(text1):
-            self.assertEqual(value,0)
-        self.assertEqual(b.keyWordCheck(text2)[8], 1)
-        self.assertEqual(b.keyWordCheck(text3)[15], 1)
-        self.assertEqual(b.keyWordCheck(text3)[13], 1)
-        self.assertEqual(b.keyWordCheck(text4)[20], 1)
+        with self.assertRaises(e.TokeniserException):
+            _ = v.Vectorise(tokeniser= '', 
+                         preLAChanges= [],
+                         tokenLevelLA= ['POS_TAG'],
+                         textLevelLA= [],
+                         corpusLevelLA= '')
 
     def test_tokeniserNameError(self):
-        _ = v.Vectorise('',
-                        ['REMOVE_STOPWORDS'],
-                        [],
-                        ['KEYWORDS'],
-                        '',
-                        [4,5])
         with self.assertRaises(e.TokeniserException):
-            _ = v.Vectorise('invalid',
-                            ['REMOVE_STOPWORDS'],
-                            [],
-                            ['KEYWORDS'],
-                            '',
-                            [4,5])
+            _ = v.Vectorise(tokeniser= 'invalid',
+                            preLAChanges= ['REMOVE_STOPWORDS'],
+                            tokenLevelLA= [],
+                            textLevelLA= ['KEYWORDS'],
+                            corpusLevelLA= '')
         with self.assertRaises(e.TokeniserException):
-            _ = v.Vectorise(0,
-                            ['REMOVE_STOPWORDS'],
-                            [],
-                            ['KEYWORDS'],
-                            '',
-                            [4,5])
+            _ = v.Vectorise(tokeniser= 0,
+                            preLAChanges= ['REMOVE_STOPWORDS'],
+                            tokenLevelLA= [],
+                            textLevelLA= ['KEYWORDS'])
 
     def test_preLANameError(self):
-        _ = v.Vectorise('WORD_TOKENISER', 
-                        [],
-                        [],                         
-                        ['KEYWORDS'],
-                        '',
-                        [4,5])
         with self.assertRaises(e.PreLAException):
-            _ = v.Vectorise('WORD_TOKENISER', 
-                         ['invalid'],
-                         [],
-                         ['KEYWORDS'],
-                         '',
-                         [4,5])
+            _ = v.Vectorise(tokeniser= 'WORD_TOKENISER', 
+                         preLAChanges= ['invalid'],
+                         tokenLevelLA= [],
+                         textLevelLA= ['KEYWORDS'],
+                         corpusLevelLA= '')
         with self.assertRaises(e.PreLAException):
-            _ = v.Vectorise('WORD_TOKENISER', 
-                         [0],
-                         [],
-                         ['KEYWORDS'],
-                         '',
-                         [4,5])
-        with self.assertRaises(TypeError):
-            _ = v.Vectorise('WORD_TOKENISER', 
-                         0,
-                         [],
-                         ['KEYWORDS'],
-                         '',
-                         [4,5])
+            _ = v.Vectorise(tokeniser= 'WORD_TOKENISER', 
+                         preLAChanges= [0],
+                         tokenLevelLA= [],
+                         textLevelLA= ['KEYWORDS'],
+                         corpusLevelLA= '')
         with self.assertRaises(e.PreLAException):
-            _ = v.Vectorise('WORD_TOKENISER', 
-                         [''],
-                         [],
-                         ['KEYWORDS'],
-                         '',
-                         [4,5])
+            _ = v.Vectorise(tokeniser= 'WORD_TOKENISER', 
+                         preLAChanges= 0,
+                         tokenLevelLA= [],
+                         textLevelLA= ['KEYWORDS'],
+                         corpusLevelLA= '')
+        with self.assertRaises(e.PreLAException):
+            _ = v.Vectorise(tokeniser= 'WORD_TOKENISER', 
+                         preLAChanges= [''],
+                         tokenLevelLA= [],
+                         textLevelLA= ['KEYWORDS'],
+                         corpusLevelLA= '')
 
     def test_tokenLevelLANameError(self):
-        _ = v.Vectorise('WORD_TOKENISER', 
-                         ['REMOVE_STOPWORDS'],
-                         ['POS_TAG'],
-                         ['KEYWORDS'],
-                         '',
-                         [4,5])
-        _ = v.Vectorise('WORD_TOKENISER', 
-                         ['REMOVE_STOPWORDS'],
-                         [],
-                         ['KEYWORDS'],
-                         '',
-                         [4,5])
         with self.assertRaises(e.TokenLevelException):
-            _ = v.Vectorise('WORD_TOKENISER', 
-                         ['REMOVE_STOPWORDS'],
-                         ['invalid'],
-                         ['KEYWORDS'],
-                         '',
-                         [4,5])
+            _ = v.Vectorise(tokeniser='WORD_TOKENISER', 
+                         preLAChanges= ['REMOVE_STOPWORDS'],
+                         tokenLevelLA= ['invalid'],
+                         textLevelLA= ['KEYWORDS'],
+                         corpusLevelLA= '')
         with self.assertRaises(e.TokenLevelException):
-            _ = v.Vectorise('WORD_TOKENISER', 
-                         ['REMOVE_STOPWORDS'],
-                         [''],
-                         ['KEYWORDS'],
-                         '',
-                         [4,5])
+            _ = v.Vectorise(tokeniser= 'WORD_TOKENISER', 
+                         preLAChanges= ['REMOVE_STOPWORDS'],
+                         tokenLevelLA= [''],
+                         textLevelLA= ['KEYWORDS'],
+                         corpusLevelLA= '')
         with self.assertRaises(e.TokenLevelException):
-            _ = v.Vectorise('WORD_TOKENISER', 
-                         ['REMOVE_STOPWORDS'],
-                         ['POS_TAG', 'invalid'],
-                         ['KEYWORDS'],
-                         '',
-                         [4,5])
+            _ = v.Vectorise(tokeniser= 'WORD_TOKENISER', 
+                         preLAChanges= ['REMOVE_STOPWORDS'],
+                         tokenLevelLA= ['POS_TAG', 'invalid'],
+                         textLevelLA= ['KEYWORDS'],
+                         corpusLevelLA= '')
         with self.assertRaises(e.TokenLevelException):
-            _ = v.Vectorise('WORD_TOKENISER', 
-                         ['REMOVE_STOPWORDS'],
-                         [0],
-                         ['KEYWORDS'],
-                         '',
-                         [4,5])
-        with self.assertRaises(TypeError):
-            _ = v.Vectorise('WORD_TOKENISER', 
-                         ['REMOVE_STOPWORDS'],
-                         0,
-                         ['KEYWORDS'],
-                         '',
-                         [4,5])
+            _ = v.Vectorise(tokeniser= 'WORD_TOKENISER', 
+                         preLAChanges= ['REMOVE_STOPWORDS'],
+                         tokenLevelLA= [0],
+                         textLevelLA= ['KEYWORDS'],
+                         corpusLevelLA= '')
+        with self.assertRaises(e.TokenLevelException):
+            _ = v.Vectorise(tokeniser= 'WORD_TOKENISER', 
+                         preLAChanges= ['REMOVE_STOPWORDS'],
+                         tokenLevelLA= 0,
+                         textLevelLA= ['KEYWORDS'],
+                         corpusLevelLA= '')
 
     def test_textLevelLANameError(self):
-        _ = v.Vectorise('WORD_TOKENISER', 
-                         ['REMOVE_STOPWORDS'],
-                         ['POS_TAG'],
-                         [],
-                         '',
-                         [4,5])
-        _ = v.Vectorise('WORD_TOKENISER', 
-                         ['REMOVE_STOPWORDS'],
-                         [],
-                         ['KEYWORDS'],
-                         '',
-                         [4,5])
         with self.assertRaises(e.TextLevelException):
-            _ = v.Vectorise('WORD_TOKENISER', 
-                         ['REMOVE_STOPWORDS'],
-                         [],
-                         ['invalid'],
-                         '',
-                         [4,5])
+            _ = v.Vectorise(tokeniser= 'WORD_TOKENISER', 
+                         preLAChanges= ['REMOVE_STOPWORDS'],
+                         tokenLevelLA= [],
+                         textLevelLA= ['invalid'],
+                         corpusLevelLA= '')
         with self.assertRaises(e.TextLevelException):
-            _ = v.Vectorise('WORD_TOKENISER', 
-                         ['REMOVE_STOPWORDS'],
-                         [],
-                         ['invalid','ASCII_CONVERSION'],
-                         '',
-                         [4,5])
+            _ = v.Vectorise(tokeniser= 'WORD_TOKENISER', 
+                         preLAChanges= ['REMOVE_STOPWORDS'],
+                         tokenLevelLA= [],
+                         textLevelLA= ['invalid','ASCII_CONVERSION'],
+                         corpusLevelLA= '')
         with self.assertRaises(e.TextLevelException):
-            _ = v.Vectorise('WORD_TOKENISER', 
-                         ['REMOVE_STOPWORDS'],
-                         [],
-                         [0],
-                         '',
-                         [4,5])
-        with self.assertRaises(TypeError):
-            _ = v.Vectorise('WORD_TOKENISER', 
-                         ['REMOVE_STOPWORDS'],
-                         [],
-                         0,
-                         '',
-                         [4,5])
+            _ = v.Vectorise(tokeniser= 'WORD_TOKENISER', 
+                         preLAChanges= ['REMOVE_STOPWORDS'],
+                         tokenLevelLA= [],
+                         textLevelLA= [0],
+                         corpusLevelLA= '')
         with self.assertRaises(e.TextLevelException):
-            _ = v.Vectorise('WORD_TOKENISER', 
-                         ['REMOVE_STOPWORDS'],
-                         [],
-                         [''],
-                         '',
-                         [4,5])
+            _ = v.Vectorise(tokeniser= 'WORD_TOKENISER', 
+                         preLAChanges= ['REMOVE_STOPWORDS'],
+                         tokenLevelLA= [],
+                         textLevelLA= 0,
+                         corpusLevelLA= '')
+        with self.assertRaises(e.TextLevelException):
+            _ = v.Vectorise(tokeniser= 'WORD_TOKENISER', 
+                         preLAChanges= ['REMOVE_STOPWORDS'],
+                         tokenLevelLA= [],
+                         textLevelLA= [''],
+                         corpusLevelLA= '')
             
     def test_corpusLevelLANameError(self):
-        _ = v.Vectorise('WORD_TOKENISER', 
-                         ['REMOVE_STOPWORDS'],
-                         ['POS_TAG'],
-                         ['KEYWORDS'],
-                         '',
-                         [4,5])
         with self.assertRaises(e.CorpusLevelException):
-            _ = v.Vectorise('WORD_TOKENISER', 
-                         ['REMOVE_STOPWORDS'],
-                         [],
-                         ['KEYWORDS'],
-                         'invalid',
-                         [4,5])
+            _ = v.Vectorise(tokeniser= 'WORD_TOKENISER', 
+                         preLAChanges= ['REMOVE_STOPWORDS'],
+                         tokenLevelLA= [],
+                         textLevelLA= ['KEYWORDS'],
+                         corpusLevelLA= 'invalid')
         with self.assertRaises(e.CorpusLevelException):
-            _ = v.Vectorise('WORD_TOKENISER', 
-                         ['REMOVE_STOPWORDS'],
-                         [],
-                         ['KEYWORDS'],
-                         [''],
-                         [4,5])
+            _ = v.Vectorise(tokeniser= 'WORD_TOKENISER', 
+                         preLAChanges= ['REMOVE_STOPWORDS'],
+                         tokenLevelLA= [],
+                         textLevelLA= ['KEYWORDS'],
+                         corpusLevelLA= [''])
         with self.assertRaises(e.CorpusLevelException):
-            _ = v.Vectorise('WORD_TOKENISER', 
-                         ['REMOVE_STOPWORDS'],
-                         [],
-                         ['KEYWORDS'],
-                         [0],
-                         [4,5])
+            _ = v.Vectorise(tokeniser= 'WORD_TOKENISER', 
+                         preLAChanges= ['REMOVE_STOPWORDS'],
+                         tokenLevelLA= [],
+                         textLevelLA= ['KEYWORDS'],
+                         corpusLevelLA= [0])
         with self.assertRaises(e.CorpusLevelException):
-            _ = v.Vectorise('WORD_TOKENISER', 
-                         ['REMOVE_STOPWORDS'],
-                         [],
-                         ['KEYWORDS'],
-                         0,
-                         [4,5])
+            _ = v.Vectorise(tokeniser= 'WORD_TOKENISER', 
+                         preLAChanges= ['REMOVE_STOPWORDS'],
+                         tokenLevelLA= [],
+                         textLevelLA= ['KEYWORDS'],
+                         corpusLevelLA= 0)
+            
+    def test_ngramRangeError(self):
+        with self.assertRaises(e.NGramException):
+            _ = v.Vectorise(tokeniser= 'WORD_TOKENISER', 
+                         preLAChanges= ['REMOVE_STOPWORDS'],
+                         tokenLevelLA= [],
+                         textLevelLA= ['KEYWORDS'],
+                         corpusLevelLA= '',
+                         ngramRange= (0, 0))
+        with self.assertRaises(e.NGramException):
+            _ = v.Vectorise(tokeniser= 'WORD_TOKENISER', 
+                         preLAChanges= ['REMOVE_STOPWORDS'],
+                         tokenLevelLA= [],
+                         textLevelLA= ['KEYWORDS'],
+                         corpusLevelLA= '',
+                         ngramRange= (-1, 0))
+        with self.assertRaises(e.NGramException):
+            _ = v.Vectorise(tokeniser= 'WORD_TOKENISER', 
+                         preLAChanges= ['REMOVE_STOPWORDS'],
+                         tokenLevelLA= [],
+                         textLevelLA= ['KEYWORDS'],
+                         corpusLevelLA= '',
+                         ngramRange= (2, 1))
+        with self.assertRaises(e.NGramException):
+            _ = v.Vectorise(tokeniser= 'WORD_TOKENISER', 
+                         preLAChanges= ['REMOVE_STOPWORDS'],
+                         tokenLevelLA= [],
+                         textLevelLA= ['KEYWORDS'],
+                         corpusLevelLA= '',
+                         ngramRange= (1, -1))
+        with self.assertRaises(e.NGramException):
+            _ = v.Vectorise(tokeniser= 'WORD_TOKENISER', 
+                         preLAChanges= ['REMOVE_STOPWORDS'],
+                         tokenLevelLA= [],
+                         textLevelLA= ['KEYWORDS'],
+                         corpusLevelLA= '',
+                         ngramRange= (-1, 1))
     
     def test_buildVectorPreLA(self):
         text1 = 'The quick brown fox jumps over the lazy dog'
         text2 = 'She sells sea shells by the sea shore'
-        vc = v.Vectorise('', 
-                         ['REMOVE_STOPWORDS'],
-                         [],
-                         ['KEYWORDS'],
-                         '',
-                         [4,5])
+        vc = v.Vectorise(preLAChanges= ['REMOVE_STOPWORDS'],
+                         textLevelLA= ['KEYWORDS'])
         vector1 = vc.buildVector(text1)
         vector2 = vc.buildVector(text2)
         self.assertEqual(len(vector1), len(vector2))
-        vc = v.Vectorise('', 
-                         ['STEMMING'],
-                         [],
-                         ['KEYWORDS'],
-                         '',
-                         [4,5])
+        vc = v.Vectorise(preLAChanges= ['STEMMING'],
+                         textLevelLA= ['KEYWORDS'])
         vector1 = vc.buildVector(text1)
         vector2 = vc.buildVector(text2)
         self.assertEqual(len(vector1), len(vector2))
@@ -334,30 +299,18 @@ class TestVectorise(unittest.TestCase):
     def test_buildVectorTokeniser(self):
         text1 = 'The quick brown fox jumps over the lazy dog'
         text2 = 'She sells sea shells by the sea shore'
-        vc = v.Vectorise('WORD_TOKENISER', 
-                         [],
-                         [],
-                         ['ASCII_CONVERSION'],
-                         '',
-                         [4,5])
+        vc = v.Vectorise(tokeniser= 'WORD_TOKENISER', 
+                         textLevelLA= ['ASCII_CONVERSION'])
         vector1 = vc.buildVector(text1)
         vector2 = vc.buildVector(text2)
         self.assertEqual(len(vector1), len(vector2))
-        vc = v.Vectorise('PUNC_TOKENISER', 
-                         [],
-                         [],
-                         ['ASCII_CONVERSION'],
-                         '',
-                         [4,5])
+        vc = v.Vectorise(tokeniser= 'PUNC_TOKENISER', 
+                         textLevelLA= ['ASCII_CONVERSION'])
         vector1 = vc.buildVector(text1)
         vector2 = vc.buildVector(text2)
         self.assertEqual(len(vector1), len(vector2))
-        vc = v.Vectorise('TWEET_TOKENISER', 
-                         [],
-                         [],
-                         ['ASCII_CONVERSION'],
-                         '',
-                         [4,5])
+        vc = v.Vectorise(tokeniser= 'TWEET_TOKENISER',
+                         textLevelLA= ['ASCII_CONVERSION'])
         vector1 = vc.buildVector(text1)
         vector2 = vc.buildVector(text2)
         self.assertEqual(len(vector1), len(vector2))
@@ -365,12 +318,8 @@ class TestVectorise(unittest.TestCase):
     def test_buildVectorTokenLevel(self):
         text1 = 'The quick brown fox jumps over the lazy dog'
         text2 = 'She sells sea shells by the sea shore'
-        vc = v.Vectorise('WORD_TOKENISER', 
-                         [],
-                         ['POS_TAG'],
-                         [],
-                         '',
-                         [4,5])
+        vc = v.Vectorise(tokeniser= 'WORD_TOKENISER', 
+                         tokenLevelLA= ['POS_TAG'])
         vector1 = vc.buildVector(text1)
         vector2 = vc.buildVector(text2)
         self.assertEqual(len(vector1), len(vector2))
@@ -378,182 +327,88 @@ class TestVectorise(unittest.TestCase):
     def test_buildVectorTextLevel(self):
         text1 = 'The quick brown fox jumps over the lazy dog'
         text2 = 'She sells sea shells by the sea shore'
-        vc = v.Vectorise('', 
-                         [],
-                         [],
-                         ['KEYWORDS'],
-                         '',
-                         [4,5])
+        vc = v.Vectorise(textLevelLA= ['KEYWORDS'])
         vector1 = vc.buildVector(text1)
         vector2 = vc.buildVector(text2)
         self.assertEqual(len(vector1), len(vector2))
-        vc = v.Vectorise('', 
-                         [],
-                         [],
-                         ['ASCII_CONVERSION'],
-                         '',
-                         [4,5])
+        vc = v.Vectorise(textLevelLA= ['ASCII_CONVERSION'])
         vector1 = vc.buildVector(text1)
         vector2 = vc.buildVector(text2)
         self.assertEqual(len(vector1), len(vector2))
-        vc = v.Vectorise('', 
-                         [],
-                         [],
-                         ['KEYWORDS'],
-                         '',
-                         [4,5])
 
     def test_buildVector(self):
         text1 = 'The quick brown fox jumps over the lazy dog'
         text2 = 'She sells sea shells by the sea shore'
-        vc = v.Vectorise('WORD_TOKENISER', 
-                         ['REMOVE_STOPWORDS'],
-                         ['POS_TAG'],
-                         ['KEYWORDS'],
-                         '',
-                         [4,5])
+        vc = v.Vectorise(tokeniser= 'WORD_TOKENISER', 
+                         preLAChanges= ['REMOVE_STOPWORDS'],
+                         tokenLevelLA= ['POS_TAG'],
+                         textLevelLA= ['KEYWORDS'])
         vector1 = vc.buildVector(text1)
         vector2 = vc.buildVector(text2)
         self.assertEqual(len(vector1), len(vector2))
     
     def test_recordToVector(self):
-        vect = v.Vectorise('WORD_TOKENISER',
-                           [],
-                           [],
-                           ['ASCII_CONVERSION'],
-                           '',
-                           [4,5])
-        record1 = [0,0,0,0,0,'','',0]
-        record2 = [0,0,0,0,0,'The quick brown','fox jumps over the lazy dog',0]
-        record3 = [0,0,0,0,0,'She sells sea','shells by the sea shore',0]
+        vect = v.Vectorise(tokeniser= 'WORD_TOKENISER',
+                           textLevelLA= ['ASCII_CONVERSION'])
+        record1 = ['','',0]
+        record2 = ['The quick brown','fox jumps over the lazy dog',0]
+        record3 = ['She sells sea','shells by the sea shore',0]
         self.assertEqual(len(vect.recordToVector(record1)),
                         len(vect.recordToVector(record2)),
                         len(vect.recordToVector(record3)))     
 
     def test_vectorise(self):
-        trainRecords = [[0,0,0,0,0,'','',0],
-                        [0,0,0,0,0,'The quick brown',
+        trainRecords = [['','',0],
+                        ['The quick brown',
                          'fox jumps over the lazy dog',0],
-                        [0,0,0,0,0,'She sells sea','shells by the sea shore',0]]
-        testRecords = [[0,0,0,0,0,'Peter piper picked a peck',
+                        ['She sells sea','shells by the sea shore',0]]
+        testRecords = [['Peter piper picked a peck',
                         'of pickled peppers',0],
-                       [0,0,0,0,0,'Red leather','yellow leather',0]]
-        vect = v.Vectorise('',
-                           [],
-                           [],
-                           [],
-                           'BAG_OF_WORDS_C',
-                           [4,5])
+                       ['Red leather','yellow leather',0]]
+        vect = v.Vectorise(corpusLevelLA= 'BAG_OF_WORDS_C')
         trainVects, testVects = vect.vectorise(trainRecords, testRecords)
         self.assertEqual(trainVects.shape[0], len(trainRecords))
         self.assertEqual(testVects.shape[0], len(testRecords))
 
-        vect = v.Vectorise('',
-                           [],
-                           [],
-                           [],
-                           'MOD_BAG_OF_WORDS_C',
-                           [4,5])
+        vect = v.Vectorise(corpusLevelLA= 'MOD_BAG_OF_WORDS_C')
         trainVects, testVects = vect.vectorise(trainRecords, testRecords)
         self.assertEqual(trainVects.shape[0], len(trainRecords))
         self.assertEqual(testVects.shape[0], len(testRecords))
 
-        vect = v.Vectorise('',
-                           [],
-                           [],
-                           [],
-                           'BAG_OF_WORDS_F',
-                           [4,5])
+        vect = v.Vectorise(corpusLevelLA= 'BAG_OF_WORDS_F')
         trainVects, testVects = vect.vectorise(trainRecords, testRecords)
         self.assertEqual(trainVects.shape[0], len(trainRecords))
         self.assertEqual(testVects.shape[0], len(testRecords))
 
-        vect = v.Vectorise('',
-                           [],
-                           [],
-                           [],
-                           'MOD_BAG_OF_WORDS_F',
-                           [4,5])
+        vect = v.Vectorise(corpusLevelLA= 'MOD_BAG_OF_WORDS_F')
         trainVects, testVects = vect.vectorise(trainRecords, testRecords)
         self.assertEqual(trainVects.shape[0], len(trainRecords))
         self.assertEqual(testVects.shape[0], len(testRecords))
 
-        vect = v.Vectorise('',
-                           [],
-                           [],
-                           [],
-                           'BAG_OF_WORDS_H',
-                           [4,5])
+        vect = v.Vectorise(tokeniser= 'WORD_TOKENISER',
+                           textLevelLA= ['ASCII_CONVERSION'],
+                           corpusLevelLA= 'BAG_OF_WORDS_C')
         trainVects, testVects = vect.vectorise(trainRecords, testRecords)
         self.assertEqual(trainVects.shape[0], len(trainRecords))
         self.assertEqual(testVects.shape[0], len(testRecords))
 
-        vect = v.Vectorise('',
-                           [],
-                           [],
-                           [],
-                           'MOD_BAG_OF_WORDS_H',
-                           [4,5])
+        vect = v.Vectorise(tokeniser= 'WORD_TOKENISER',
+                           textLevelLA= ['ASCII_CONVERSION'],
+                           corpusLevelLA= 'MOD_BAG_OF_WORDS_C')
         trainVects, testVects = vect.vectorise(trainRecords, testRecords)
         self.assertEqual(trainVects.shape[0], len(trainRecords))
         self.assertEqual(testVects.shape[0], len(testRecords))
 
-        vect = v.Vectorise('WORD_TOKENISER',
-                           [],
-                           [],
-                           ['ASCII_CONVERSION'],
-                           'BAG_OF_WORDS_C',
-                           [4,5])
+        vect = v.Vectorise(tokeniser= 'WORD_TOKENISER',
+                           textLevelLA= ['ASCII_CONVERSION'],
+                           corpusLevelLA= 'BAG_OF_WORDS_F')
         trainVects, testVects = vect.vectorise(trainRecords, testRecords)
         self.assertEqual(trainVects.shape[0], len(trainRecords))
         self.assertEqual(testVects.shape[0], len(testRecords))
 
-        vect = v.Vectorise('WORD_TOKENISER',
-                           [],
-                           [],
-                           ['ASCII_CONVERSION'],
-                           'MOD_BAG_OF_WORDS_C',
-                           [4,5])
-        trainVects, testVects = vect.vectorise(trainRecords, testRecords)
-        self.assertEqual(trainVects.shape[0], len(trainRecords))
-        self.assertEqual(testVects.shape[0], len(testRecords))
-
-        vect = v.Vectorise('WORD_TOKENISER',
-                           [],
-                           [],
-                           ['ASCII_CONVERSION'],
-                           'BAG_OF_WORDS_F',
-                           [4,5])
-        trainVects, testVects = vect.vectorise(trainRecords, testRecords)
-        self.assertEqual(trainVects.shape[0], len(trainRecords))
-        self.assertEqual(testVects.shape[0], len(testRecords))
-
-        vect = v.Vectorise('WORD_TOKENISER',
-                           [],
-                           [],
-                           ['ASCII_CONVERSION'],
-                           'MOD_BAG_OF_WORDS_F',
-                           [4,5])
-        trainVects, testVects = vect.vectorise(trainRecords, testRecords)
-        self.assertEqual(trainVects.shape[0], len(trainRecords))
-        self.assertEqual(testVects.shape[0], len(testRecords))
-
-        vect = v.Vectorise('WORD_TOKENISER',
-                           [],
-                           [],
-                           ['ASCII_CONVERSION'],
-                           'BAG_OF_WORDS_H',
-                           [4,5])
-        trainVects, testVects = vect.vectorise(trainRecords, testRecords)
-        self.assertEqual(trainVects.shape[0], len(trainRecords))
-        self.assertEqual(testVects.shape[0], len(testRecords))
-
-        vect = v.Vectorise('WORD_TOKENISER',
-                           [],
-                           [],
-                           ['ASCII_CONVERSION'],
-                           'MOD_BAG_OF_WORDS_H',
-                           [4,5])
+        vect = v.Vectorise(tokeniser= 'WORD_TOKENISER',
+                           textLevelLA= ['ASCII_CONVERSION'],
+                           corpusLevelLA= 'MOD_BAG_OF_WORDS_F')
         trainVects, testVects = vect.vectorise(trainRecords, testRecords)
         self.assertEqual(trainVects.shape[0], len(trainRecords))
         self.assertEqual(testVects.shape[0], len(testRecords))

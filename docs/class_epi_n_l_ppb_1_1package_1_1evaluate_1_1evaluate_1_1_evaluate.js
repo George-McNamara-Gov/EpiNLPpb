@@ -2,8 +2,6 @@ var class_epi_n_l_ppb_1_1package_1_1evaluate_1_1evaluate_1_1_evaluate =
 [
     [ "__init__", "class_epi_n_l_ppb_1_1package_1_1evaluate_1_1evaluate_1_1_evaluate.html#a20ce407f8d468b7d664ccdfca6b2f49d", null ],
     [ "evaluate", "class_epi_n_l_ppb_1_1package_1_1evaluate_1_1evaluate_1_1_evaluate.html#ac50f8d209f7126cb4c16dc7d75c9a091", null ],
-    [ "radialPlot", "class_epi_n_l_ppb_1_1package_1_1evaluate_1_1evaluate_1_1_evaluate.html#a392d62facddd28ded26423fa6c3ef21d", null ],
-    [ "timeSpacePlot", "class_epi_n_l_ppb_1_1package_1_1evaluate_1_1evaluate_1_1_evaluate.html#af4d91378bf11d1cb5bae73554625e027", null ],
     [ "actualFlags", "class_epi_n_l_ppb_1_1package_1_1evaluate_1_1evaluate_1_1_evaluate.html#a8db09845a62bbc27dbe64fcf96c8d91e", null ],
     [ "prec", "class_epi_n_l_ppb_1_1package_1_1evaluate_1_1evaluate_1_1_evaluate.html#aa2f1c7c7616934c07ccbe137ed64f803", null ],
     [ "predictedFlags", "class_epi_n_l_ppb_1_1package_1_1evaluate_1_1evaluate_1_1_evaluate.html#a58a1d73866889b28ab2ff3919c3836eb", null ],

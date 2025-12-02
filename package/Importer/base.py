@@ -8,29 +8,25 @@ Classes:
 
 Functions:
 
+    inRange(int, tuple) -> bool
+    getFileType(str) -> str
     getYear(str) -> int
-    getYearExcel(pd.Timestamp) -> int
+    handleNaN(float) -> int | float
 
 Misc variables:
 
     None
 
-Exceptions :
+Exceptions:
 
-    UnsupportedFileTypeException
-    NoTextFieldsException
-    NoFlagFieldException
+    FileException
     ColumnLabelException
-    MinAgeException
-    MaxAgeExcpetion
-    HospitalException
-    SexException
-    MinYearException
-    MaxYearException
-    MinMaxYearException
+    UnsupportedFileTypeException
+    BoundsException
 '''
 from . import constants as c
 import pandas as pd
+import math
 from .. import exceptions as e
 
 class DataSet:
@@ -43,52 +39,45 @@ class DataSet:
     ----------
     columnLabels : list
         The labels of the columns with relavant data.
-    dateIndex : int
-        The index in a record containing the date data.
-    hospIndex : int
-        The index in a record containing the hospital data.
-    sexIndex : int
-        The index in a record containing the sex data.
-    ageIndex : int
-        The index in a record containing the age data.
-    textIndicies : list
-        The indices in a record containing the free text.
-    flagIndex : int
-        The index in a record containing the flag.
     textFieldColumnLabels : list
-        The labels of the columns with free text. Used only in 
-        model/demonstration.py.
+        The labels of the columns with free text.
+    trainFile : str
+        The path to a file containing training data.
+    testFile : str
+        The path to a file containing testing data.
     fileLocations : list
-        List of strings of file locations where the data is stored.
-    fileType : str
-        A string encoding the type of the files.
+        List of paths of files where data is stored.
 
     Methods
     -------
-    importToList() -> list:
-        Creates a list containing the data from the files.
-    fileToList(str) -> list:
-        Extracts a list of records from a given file.
+    importToFrame() -> pd.DataFrame | tuple:
+        Creates a data frame or pair of data frames containing data from the provided files.
+    fileToFrame(str) -> pd.DataFrame:
+        Extracts a data frame of records from a given file.
     '''
 
-    def __init__(self, 
-                 fileLocations: list, 
-                 fileType : str, 
+    def __init__(self,
+                 trainFile : str,
+                 testFile : str, 
+                 fileLocations: list,
                  dateColumnLabel : str,
                  hospitalColumnLabel : str,
                  sexColumnLabel : str,
                  ageColumnLabel : str,
-                 textFieldColumnLables : list,
+                 customColumnLabels : list,
+                 textFieldColumnLabels : list,
                  flagColumnLabel : str):
         '''
         Constructs attributes for DataSet object.
 
         Parameters
         ----------
+        trainFile : str
+            The path to a file containing training data.
+        testFile : str
+            The path to a file containing testing data.
         fileLocations : list
-            List of strings of file names where the data is stored.
-        fileType : str
-            A string encoding the type of the files.
+            List of paths of files where data is stored.
         dateColumnLabel : str
             The label of the column with the date data.
         hospitalColumnLabel : str
@@ -97,74 +86,123 @@ class DataSet:
             The label of the column with the sex data.
         ageColumnLabel : str
             The label of the column with the age data.
+        customColumnLabels : list
+            The labels of columns with custom data to filter.
         textFieldColumnLabels : list
             The labels of the columns with free text.
         flagColumnLabel : str
-            The label of the column with the flag.
+            The label of the column with the classification flag.
         '''
-        if fileType not in c.SUPPORTED_FILE_TYPES:
-            raise e.UnsupportedFileTypeException(
-                f'File type must be one of {c.SUPPORTED_FILE_TYPES}.'
+        if not isinstance(trainFile, str):
+            raise e.FileException(
+                'trainFile must be a string.'
+            )
+        if not isinstance(testFile, str):
+            raise e.FileException(
+                'testFile must be a string.'
+            )
+        if not isinstance(fileLocations, list):
+            raise e.FileException(
+                'fileLocations must be a list.'
+            )
+        for file in fileLocations:
+            if not isinstance(file, str):
+                raise e.FileException(
+                    'Files in fileLocations must be strings.'
                 )
-
-        if textFieldColumnLables == []:
-            raise e.NoTextFieldsException(
+        if not isinstance(dateColumnLabel, str):
+            raise e.ColumnLabelException(
+                'dateColumnLabel must be a string.'
+            )
+        if not isinstance(hospitalColumnLabel, str):
+            raise e.ColumnLabelException(
+                'hospitalColumnLabel must be a string.'
+            )
+        if not isinstance(sexColumnLabel, str):
+            raise e.ColumnLabelException(
+                'sexColumnLabel must be a string.'
+            )
+        if not isinstance(ageColumnLabel, str):
+            raise e.ColumnLabelException(
+                'ageColumnLabel must be a string.'
+            )
+        if not isinstance(customColumnLabels, list):
+            raise e.ColumnLabelException(
+                'customColumnLabels must be a list.'
+            )
+        for label in customColumnLabels:
+            if not isinstance(label, str):
+                raise e.ColumnLabelException(
+                    'Labels in customColumnLabels must be strings.'
+                )
+        if not isinstance(textFieldColumnLabels, list):
+            raise e.ColumnLabelException(
+                'textFieldColumnLabels must be a list.'
+            )
+        for label in textFieldColumnLabels:
+            if not isinstance(label, str):
+                raise e.ColumnLabelException(
+                    'Labels in textFieldColumnLabels must be strings.'
+                )
+        if not isinstance(flagColumnLabel, str):
+            raise e.ColumnLabelException(
+                'flagColumnLabel must be a string.'
+            )
+        
+        if trainFile != '' and testFile == '':
+            raise e.FileException(
+                'If providing a trainfile, also need to provide a testFile.'
+            )
+        if trainFile == '' and testFile != '':
+            raise e.FileException(
+                'If providing a testfile, also need to provide a trainFile.'
+                )
+        if trainFile == '' and testFile == '' and fileLocations == []:
+            raise e.FileException(
+                'Need to provide at least one data file.'
+            )
+        
+        if textFieldColumnLabels == []:
+            raise e.ColumnLabelException(
                 'Must provide at least one text field column label.'
             )
         
         if flagColumnLabel == '':
-            raise e.NoFlagFieldException(
+            raise e.ColumnLabelException(
                 'Must provide a flag column label.'
             )
         
         self.columnLabels = []
-        index = 0
 
-        if dateColumnLabel == '':
-            self.dateIndex = -1
-        else:
-            self.dateIndex = index
-            index += 1
+        if dateColumnLabel != '':
             self.columnLabels.append(dateColumnLabel)
         
-        if hospitalColumnLabel == '':
-            self.hospIndex = -1
-        else:
-            self.hospIndex = index
-            index += 1
+        if hospitalColumnLabel != '':
             self.columnLabels.append(hospitalColumnLabel)
         
-        if sexColumnLabel == '':
-            self.sexIndex = -1
-        else:
-            self.sexIndex = index
-            index += 1
+        if sexColumnLabel != '':
             self.columnLabels.append(sexColumnLabel)
 
-        if ageColumnLabel == '':
-            self.ageIndex = -1
-        else:
-            self.ageIndex = index
-            index += 1
+        if ageColumnLabel != '':
             self.columnLabels.append(ageColumnLabel)
-        
-        for label in textFieldColumnLables:
+
+        for label in customColumnLabels:
             self.columnLabels.append(label)
-        self.textIndices = list(
-            range(index, index + len(textFieldColumnLables))
-            )
+        
+        for label in textFieldColumnLabels:
+            self.columnLabels.append(label)
 
         self.columnLabels.append(flagColumnLabel)
-        self.flagIndex = index + len(textFieldColumnLables)
-        
-        self.textFieldColumnLables = textFieldColumnLables
+ 
+        self.textFieldColumnLabels = textFieldColumnLabels
 
+        self.trainFile = trainFile
+        self.testFile = testFile
         self.fileLocations = fileLocations
-        self.fileType = fileType
 
-    def importToList(self) -> list:
+    def importToFrame(self) -> pd.DataFrame | tuple:
         '''
-        Creates a list containing the data from the files.
+        Creates a data frame or pair of data frames containing data from the provided files.
 
         Parameters
         ----------
@@ -172,52 +210,69 @@ class DataSet:
 
         Returns
         -------
-        dataList : list
-            A list of records with relavent columns from the data files.
+        dataFrame : pd.DataFrame
+            A data frame of records with relavent columns from the data files.
+        
+        OR
+
+        trainFrame : pd.DataFrame
+            A data frame of training records with relavent columns from the data files.
+        testFrame : pd.DataFrame
+            A data frame of testing records with relavent columns from the data files.
         '''
-        data_frames = [self.fileToList(file) for file in self.fileLocations]
-        data_list = [record for df in data_frames for record in df]
-        return data_list
+        if self.trainFile != '' and self.testFile != '':
+            trainFrame = self.fileToFrame(self.trainFile)
+            testFrame = self.fileToFrame(self.testFile)
+            return (trainFrame, testFrame)
+        else:
+            dataFrame = self.fileToFrame(self.fileLocations[0])
+            for file in self.fileLocations[1:len(self.fileLocations)]:
+                dataFrame = pd.concat([dataFrame, self.fileToFrame(file)], axis= 0)
+            return dataFrame
     
-    def fileToList(self, 
-                   file : str) -> list:
+    def fileToFrame(self, 
+                   file : str) -> pd.DataFrame:
         '''
-        Extracts a list of records from a given file.
+        Extracts a data frame of records from a given file.
 
         Parameters
         ----------
         file : str
-            The file to extract the records from.
+            The path of the file to extract the records from.
 
         Retruns
         -------
-        outList : list
-            The list of records extracted from the file.
+        outFrame : pd.DataFrame
+            The data frame of records extracted from the file.
         '''
-        if self.fileType == 'CSV':
+        fileType = getFileType(file)
+        if fileType not in c.SUPPORTED_FILE_TYPES:
+            raise e.UnsupportedFileTypeException(
+                'Must provide files of type csv or xlsx.'
+            )
+        if fileType == 'csv':
             try:
-                outList = pd.read_csv(
+                outFrame = pd.read_csv(
                     file, 
                     usecols = self.columnLabels, 
                     encoding_errors= 'ignore', 
                     low_memory= False
-                    ).values.tolist()
+                    )
             except ValueError:
                 raise e.ColumnLabelException(
                     'One of the column labels was not found in the data file.'
                 )
-        elif self.fileType == 'XLSX':
+        elif fileType == 'xlsx':
             try:
-                outList = pd.read_excel(
+                outFrame = pd.read_excel(
                     file, 
                     usecols = self.columnLabels
-                    ).values.tolist()
+                    )
             except ValueError:
                 raise e.ColumnLabelException(
                     'One of the column labels was not found in the data file.'
                 )
-
-        return outList
+        return outFrame
 
 class Demographic:
     '''
@@ -227,145 +282,321 @@ class Demographic:
 
     Attributes
     ----------
-    minAge : int
-        Lowest age.
-    maxAge : int
-        Highest age.
-    ageIndex : int
-        The index in a record containing the age data.
+    dateColumnLabel : str
+        The label of the column with the date data.
+    hospitalColumnLabel : str
+        The label of the column with the hospital data.
+    sexColumnLabel : str
+        The label of the column with the sex data.
+    ageColumnLabel : str
+        The label of the column with the age data.
+    customColumnLabels : list
+        A list of labels of columns with custom data to filter.
+    ageBounds : tuple
+        The minimum and maximum age values for included records.
     hospital : str
-        Which hospital(s) to include.
-    hospitalIndex : int
-        The index in a record containing the hospital data.
-    sex : str
-        Which sex(es) to include.
-    sexIndex : int
-        The index in a record containing the sex data.
-    minYear : int
-        Earliest year.
-    maxYear : int
-        Latest year.
-    dateIndex : int
-        The index in a record containing the date data.
-
+        The hospital ID for included records.
+    sex : int
+        An integer representing the sex(es) for included records. 
+        0 for all. 1 for male. 2 for female.
+    yearBounds : tuple
+        The minimum and maximum year values for included records.
+    customBounds : list
+        A list of bounds for columns with custom data.
+    
     Methods
     -------
-    demographicCheck(list) -> bool
-        Checks if a record relates to a patient in the demographic.
+    filer(pd.DataFrame) -> pd.DataFrame
+        Filters a data frame of records and returns those satisfying designated demographic.
     '''
     
-    def __init__(self, 
-                minAge: int, 
-                maxAge: int,
-                ageIndex : int, 
+    def __init__(self,
+                dateColumnLabel : str,
+                hospitalColumnLabel : str,
+                sexColumnLabel : str,
+                ageColumnLabel : str,
+                customColumnLabels : list, 
+                ageBounds : tuple,
                 hospital: str,
-                hospIndex : int, 
-                sex: str,
-                sexIndex : str, 
-                minYear: int, 
-                maxYear: int,
-                dateIndex : int):
+                sex: int,
+                yearBounds : tuple,
+                customBounds : list):
         '''
-        Checks inputs are valid and constructs attributes for Demographic.
+        Checks inputs are valid and constructs attributes.
 
         Parameters
         ----------
-        minAge : int
-            Lowest age.
-        maxAge : int
-            Highest age.
-        ageIndex : int
-            The index in a record containing the age data.
+        dateColumnLabel : str
+            The label of the column with the date data.
+        hospitalColumnLabel : str
+            The label of the column with the hospital data.
+        sexColumnLabel : str
+            The label of the column with the sex data.
+        ageColumnLabel : str
+            The label of the column with the age data.
+        customColumnLabels : list
+            A list of labels of columns with custom data to filter.
+        ageBounds : tuple
+            The minimum and maximum age values for included records.
         hospital : str
-            Which hospital(s) to include.
-        hospitalIndex : int
-            The index in a record containing the hospital data.
-        sex : str
-            Which sex(es) to include.
-        sexIndex : int
-            The index in a record containing the sex data.
-        minYear : int
-            Earliest year.
-        maxYear : int
-            Latest year.
-        dateIndex : int
-            The index in a record containing the date data.
+            The hospital ID for included records.
+        sex : int
+            An integer representing the sex(es) for included records. 
+            0 for all. 1 for male. 2 for female.
+        yearBounds : tuple
+            The minimum and maximum year values for included records
+        customBounds : list
+            A list of bounds for columns with custom data.
         '''
-        if minAge < 0:
-            raise e.MinAgeException(
-                'Minimum age cannot be less than 0'
+        try:
+            _ = ageBounds[0]
+        except (TypeError, IndexError):
+            raise e.BoundsException(
+                'Cannot index into ageBounds.'
                 )
-        if maxAge < minAge:
-            raise e.MaxAgeException(
-                'Maximum age cannot be less than minimum age'
+        
+        if isinstance(ageBounds[0], tuple):
+            for bound in ageBounds:
+                if not isinstance(bound[0], int):
+                    raise e.BoundsException(
+                        'lower ageBound must be an int.'
+                    )
+                if not isinstance(bound[1], int):
+                    raise e.BoundsException(
+                        'upper ageBound must be an int.'
+                    )
+                if bound[0] < 0:
+                    raise e.BoundsException(
+                        'Minimum age cannot be less than 0.'
+                    )
+                if bound[1] < bound[0]:
+                    raise e.BoundsException(
+                        'Maximum age cannot be less than minimum age.'
+                    ) 
+        else:
+            if not isinstance(ageBounds[0], int):
+                raise e.BoundsException(
+                    'lower ageBound must be an int.'
                 )
+            if not isinstance(ageBounds[1], int):
+                raise e.BoundsException(
+                    'upper ageBound must be an int.'
+                )
+            if ageBounds[0] < 0:
+                raise e.BoundsException(
+                    'Minimum age cannot be less than 0.'
+                    )
+            if ageBounds[1] < ageBounds[0]:
+                raise e.BoundsException(
+                    'Maximum age cannot be less than minimum age.'
+                ) 
+            
         if hospital not in ['ALL', 'CHHS', 'CHPB']:
-            raise e.HospitalException(
+            raise e.BoundsException(
                 'Hospital must be "ALL","CHHS" or "CHPB"'
                 )
-        if sex not in ['ALL', 'MALE', 'FEMALE']:
-            raise e.SexException('Sex must be "ALL", "MALE" or "FEMALE"')
-        if not (2015 <= minYear <= 2022):
-            raise e.MinYearException(
-                'Minimum year must be in the range 2015 to 2022'
+        
+        if sex not in [0, 1, 2]:
+            raise e.BoundsException('Sex must be 0 (all), 1 (male), or 2 (female).')
+        
+        try:
+            _ = yearBounds[0]
+        except (TypeError, IndexError):
+            raise e.BoundsException(
+                'Cannot index into yearBounds.'
                 )
-        if not (2015 <= maxYear <= 2022):
-            raise e.MaxYearException(
-                'Maximum year must be in the range 2015 to 2022'
+        
+        if isinstance(yearBounds[0], tuple):
+            for bound in yearBounds:
+                if not isinstance(bound[0], int):
+                    raise e.BoundsException(
+                        'Lower yearBound must be an int.'
+                    )
+                if not isinstance(bound[1], int):
+                    raise e.BoundsException(
+                        'Upper yearBound must be an int.'
+                    )
+                if not (1900 <= bound[0] <= 2100):
+                    raise e.BoundsException(
+                        'Minimum year must be in the range 1900 to 2100.'
+                        )
+                if not (1900 <= bound[1] <= 2100):
+                    raise e.BoundsException(
+                        'Maximum year must be in the range 1900 to 2100.'
+                        )
+                if bound[1] < bound[0]:
+                    raise e.BoundsException(
+                        'Maximum year cannot be less than minimum year'
+                        )
+        else:
+            if not isinstance(yearBounds[0], int):
+                raise e.BoundsException(
+                    'Lower yearBound must be an int.'
                 )
-        if maxYear < minYear:
-            raise e.MinMaxYearException(
-                'Maximum year cannot be less than minimum year'
+            if not isinstance(yearBounds[1], int):
+                raise e.BoundsException(
+                    'Upper yearBound must be an int.'
                 )
-        self.minAge = minAge
-        self.maxAge = maxAge
-        self.ageIndex = ageIndex
+            if not (1900 <= yearBounds[0] <= 2100):
+                raise e.BoundsException(
+                    'Minimum year must be in the range 1900 to 2100'
+                    )
+            if not (1900 <= yearBounds[1] <= 2100):
+                raise e.BoundsException(
+                    'Maximum year must be in the range 1900 to 2100'
+                    )
+            if yearBounds[1] < yearBounds[0]:
+                raise e.BoundsException(
+                    'Maximum year cannot be less than minimum year'
+                    )
+        
+        for customBound in customBounds:
+            if isinstance(customBound, str) or isinstance(customBound, int):
+                pass
+            else:
+                try:
+                    _ = customBound[0]
+                except (TypeError, IndexError):
+                    raise e.BoundsException(
+                        'Cannot index into customBounds.'
+                    )
+            
+                if isinstance(customBound[0], float | int):
+                    if not isinstance(customBound[1], float | int):
+                        raise e.BoundsException(
+                            'Upper customBound must be a float or int.'
+                        )
+                    if customBound[1] < customBound[0]:
+                        raise e.BoundsException(
+                            'Upper customBound cannot be less than lower customBound.'
+                        )
+                    
+                elif isinstance(customBound[0], tuple):
+                    for bound in customBound:
+                        if not isinstance(bound[0], float | int):
+                            raise e.BoundsException(
+                                'A sequence of bounds must be a sequence of tuples of ints or floats.'
+                            )
+                        if not isinstance(bound[0], float | int):
+                            raise e.BoundsException(
+                                'A sequence of bounds must be a sequence of tuples of ints or floats.'
+                            )
+                        if bound[1] < bound[0]:
+                            raise e.BoundsException(
+                                'Upper customBound cannot be less than lower customBound.'
+                            )
+                else:
+                    raise e.BoundsException(
+                        'customBound must be a string, int/float, tuple of int/float, or tuple of tuples of int/float.'
+                    )
+            
+        self.dateColumnLabel = dateColumnLabel
+        self.hospitalColumnLabel = hospitalColumnLabel
+        self.sexColumnLabel = sexColumnLabel
+        self.ageColumnLabel = ageColumnLabel
+        self.customColumnLabels = customColumnLabels
+        self.ageBounds = ageBounds
         self.hospital = hospital
-        self.hospIndex = hospIndex
         self.sex = sex
-        self.sexIndex = sexIndex
-        self.minYear = minYear
-        self.maxYear = maxYear
-        self.dateIndex = dateIndex
-    
-    def demographicCheck(self, 
-                         record : list) -> bool:
+        self.yearBounds = yearBounds
+        self.customBounds = customBounds
+       
+    def filter(self, data : pd.DataFrame) -> pd.DataFrame:
         '''
-        Checks if a record relates to a patient in the demographic.
+        Filters a data frame of records and returns those satisfying designated demographic.
 
         Parameters
         ----------
-        record : list
-            The record related to the patient to check.
+        data : pd.DataFrame
+            The records to be filtered.
 
         Returns
         -------
-        check : bool
-            Whether or not the related patient is in the demographic.
+        data : pd.DataFrame
+            The filtered records.
         '''
-        check = True
-        if self.dateIndex != -1:
-            if isinstance(record[self.dateIndex], pd.Timestamp):
-                check = check and (
-                    self.minYear <= getYearExcel(record[self.dateIndex]) <= self.maxYear)
+        if self.hospitalColumnLabel != '' and self.hospital != 'ALL':
+            data = data[data[self.hospitalColumnLabel] == self.hospital]
+
+        if self.sexColumnLabel != '' and self.sex != 0:
+            passes = [int(val) == self.sex for val in data[self.sexColumnLabel]]
+            data = data[passes]
+
+        if self.ageColumnLabel != '':
+            if isinstance(self.ageBounds[0], tuple):
+                passes = [inRange(handleNaN(val), self.ageBounds) for val in data[self.ageColumnLabel].values.tolist()]
+                data = data[passes]
             else:
-                check = check and (
-                    self.minYear <= getYear(record[self.dateIndex]) <= self.maxYear)
-        if self.hospIndex != -1 and self.hospital != 'ALL':
-            if self.hospital == 'CHHS':
-                check = check and record[self.hospIndex] == 'CHHS'
-            if self.hospital == 'CHPB':
-                check = check and record[self.hospIndex] == 'CHPB'
-            check = check and record[self.hospIndex] == self.hospital
-        if self.sexIndex != -1 and self.sex != 'ALL':
-            if self.sex == 'MALE':
-                check = check and int(record[self.sexIndex]) == 1
-            if self.sex == 'FEMALE':
-                check = check and int(record[self.sexIndex]) == 2
-        if self.ageIndex != -1:
-            check = check and (
-                self.minAge <= float(record[self.ageIndex]) <= self.maxAge)
-        return check
+                passes = [self.ageBounds[0] <= handleNaN(val) <= self.ageBounds[1] for val in data[self.ageColumnLabel].values.tolist()]
+                data = data[passes]
+
+        if self.dateColumnLabel != '':
+            if isinstance(self.yearBounds[0], tuple):
+                passes = [inRange(getYear(str(val)), self.yearBounds) for val in data[self.dateColumnLabel]]
+                data = data[passes]
+            else:
+                passes = [(self.yearBounds[0] <= getYear(str(val)) <= self.yearBounds[1]) for val in data[self.dateColumnLabel]]
+                data = data[passes]
+
+        for i in range(0, len(self.customBounds)):
+            print(len(data))
+            customBound = self.customBounds[i]
+            if len(self.customColumnLabels) > i:
+                customLabel = self.customColumnLabels[i]
+                if isinstance(customBound, int):
+                    passes = [handleNaN(val) == customBound for val in data[customLabel]]
+                    data = data[passes]
+                elif isinstance(customBound, str):
+                    passes = [str(val) == customBound for val in data[customLabel]]
+                    data = data[passes]
+                elif isinstance(customBound[0], int):
+                    passes = [customBound[0] <= handleNaN(val) <= customBound[1] for val in data[customLabel]]
+                    data = data[passes]
+                elif isinstance(customBound[0], tuple):
+                    passes = [inRange(val, customBound) for val in data[customLabel] if not math.isnan(val)]
+                    data = data[passes]
+
+        return data
+    
+def inRange(value : int, bounds : tuple) -> bool:
+    '''
+    Determines if an integer value is within one of several bounds.
+
+    Parameters
+    ----------
+    value : int
+        The value to check.
+    bounds : tuple
+        A tuple containing several bounds.
+
+    Returns
+    ------
+    check : bool
+        Whether the value is contained in any of the bounds.
+    '''
+    check = False
+    for bound in bounds:
+        if bound[0] <= value <= bound[1]:
+            check = True
+    return check
+    
+def getFileType(path : str) -> str:
+    '''
+    Returns the file extension of a given path.
+
+    Parameters
+    ----------
+    path : str
+        The path to get the file extension of.
+
+    Returns
+    -------
+    extension : str
+        The file extension, excluding the '.'.
+    '''
+    parts = path.split('.')
+    extension = parts[-1]
+    return extension
  
 def getYear(string: str) -> int:
     '''
@@ -383,24 +614,36 @@ def getYear(string: str) -> int:
     '''
     string = str(string)
     split = string.split("/")
-    yearData = split[2]
+    yearData = split[-1]
     parts = yearData.split(" ")
-    year = int(parts[0])
+    try:
+        year = int(parts[0])
+    except ValueError:
+        split = parts[0].split("-")
+        year = int(split[0])
     return year
 
-def getYearExcel(date : pd.Timestamp) -> int:
+def handleNaN(val : float) -> int | float:
     '''
-    Determines the year a record belongs to.
+    A helper function for handling possible NaN values from files.
 
     Parameters
     ----------
-    date : pd.Timestamp
-        Data in the date field of the xlsx file.
+    val : float
+        The float value read from the file.
 
     Returns
     -------
-    year : int
-        The year the patient presented to the ED.
+    out : int | val
+        The non-NaN value to replace the NaN value.
     '''
-    year = date.year
-    return year
+    try:
+        val = int(val)
+    except:
+        out = -math.inf
+        return out
+    if math.isnan(val):
+        out = -math.inf
+        return out
+    out = int(val)
+    return out

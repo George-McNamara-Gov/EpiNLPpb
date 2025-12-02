@@ -1,19 +1,10 @@
 var searchData=
 [
-  ['check_0',['check',['../class_epi_n_l_ppb_1_1gui_1_1build_1_1base_1_1_demographic_check.html#a5ff1553c97fc064a378d1104bd89701a',1,'EpiNLPpb.gui.build.base.DemographicCheck.check'],['../class_epi_n_l_ppb_1_1gui_1_1build_1_1vectorise_1_1base_1_1_technique_check.html#a8bb8a21d5414f6298eba43b0a385b66f',1,'EpiNLPpb.gui.build.vectorise.base.TechniqueCheck.check']]],
-  ['chhs_1',['CHHS',['../class_epi_n_l_ppb_1_1gui_1_1build_1_1filter_1_1_filter.html#ad6435eabf7843a060ff4b5daccd87975',1,'EpiNLPpb::gui::build::filter::Filter']]],
-  ['choosecolumn_2',['chooseColumn',['../class_epi_n_l_ppb_1_1gui_1_1build_1_1base_1_1_demographic_check.html#ad58381254a584409ee88f0e62c87315b',1,'EpiNLPpb::gui::build::base::DemographicCheck']]],
-  ['chpb_3',['CHPB',['../class_epi_n_l_ppb_1_1gui_1_1build_1_1filter_1_1_filter.html#a6a738adf19cc2ff937bfc363e178d6cd',1,'EpiNLPpb::gui::build::filter::Filter']]],
-  ['columnlabels_4',['columnLabels',['../class_epi_n_l_ppb_1_1package_1_1_importer_1_1base_1_1_data_set.html#aa05bd6242c36282d987d6b18a3f1c3c6',1,'EpiNLPpb::package::Importer::base::DataSet']]],
-  ['columnnames_5',['columnNames',['../class_epi_n_l_ppb_1_1gui_1_1build_1_1importer_1_1_importer.html#a195a19c35868af39f5f9775b842395f8',1,'EpiNLPpb::gui::build::importer::Importer']]],
-  ['columns_6',['columns',['../class_epi_n_l_ppb_1_1gui_1_1build_1_1base_1_1_demographic_check.html#abd40a0a3bab00f8950c19b729bacb775',1,'EpiNLPpb::gui::build::base::DemographicCheck']]],
-  ['corpus_5flevel_7',['CORPUS_LEVEL',['../namespace_epi_n_l_ppb_1_1package_1_1vectorise_1_1constants.html#a2d9d1cbdb8569fab931d3846759b8f3f',1,'EpiNLPpb::package::vectorise::constants']]],
-  ['corpuslevel_8',['corpusLevel',['../class_epi_n_l_ppb_1_1gui_1_1build_1_1vectorise_1_1vectorise_1_1_vectorise.html#ade6feb600caa221f78debe938bf8e18d',1,'EpiNLPpb::gui::build::vectorise::vectorise::Vectorise']]],
-  ['corpuslevella_9',['corpusLevelLA',['../class_epi_n_l_ppb_1_1gui_1_1build_1_1info_1_1_info.html#a01d0ad70eee30024110a578ae7e18c4f',1,'EpiNLPpb.gui.build.info.Info.corpusLevelLA'],['../class_epi_n_l_ppb_1_1gui_1_1build_1_1vectorise_1_1corpus_1_1_corpus.html#abdb19158cc9a3082b2e3ee0808848c23',1,'EpiNLPpb.gui.build.vectorise.corpus.Corpus.corpusLevelLA'],['../class_epi_n_l_ppb_1_1package_1_1vectorise_1_1vectorise_1_1_vectorise.html#a8cfd546bf3b4be92bd6f873bfda31b0b',1,'EpiNLPpb.package.vectorise.vectorise.Vectorise.corpusLevelLA']]],
-  ['corpuslevelladisp_10',['corpusLevelLADisp',['../class_epi_n_l_ppb_1_1gui_1_1build_1_1info_1_1_info.html#a359dd2ef87867b5af47a30473b53e25c',1,'EpiNLPpb::gui::build::info::Info']]],
-  ['countv_11',['COUNTV',['../namespace_epi_n_l_ppb_1_1package_1_1vectorise_1_1constants.html#a88b51dc5e5bef3e933389992560eceb4',1,'EpiNLPpb::package::vectorise::constants']]],
-  ['createbutton_12',['createButton',['../class_epi_n_l_ppb_1_1gui_1_1build_1_1create_1_1_create.html#a16c089c8e0f5633989b858f586e2448e',1,'EpiNLPpb::gui::build::create::Create']]],
-  ['createmodel_13',['createModel',['../class_epi_n_l_ppb_1_1gui_1_1build_1_1create_1_1_create.html#a289df78ebae17a05c8f2fd70daced115',1,'EpiNLPpb::gui::build::create::Create']]],
-  ['createtab_14',['createTab',['../class_epi_n_l_ppb_1_1gui_1_1build_1_1build_1_1_build.html#a2449475ebcf483d263ace727ba314bef',1,'EpiNLPpb::gui::build::build::Build']]],
-  ['cwd_15',['cwd',['../class_epi_n_l_ppb_1_1package_1_1base_1_1_n_l_p.html#a9cb6f77f1710adaa70fac7003b588fc6',1,'EpiNLPpb.package.base.NLP.cwd'],['../namespace_epi_n_l_ppb_1_1package_1_1base.html#a42d3350c0659a968eaeea4abd7d5d480',1,'EpiNLPpb.package.base.cwd'],['../namespace_epi_n_l_ppb_1_1tests_1_1test__base.html#ac664c39ad255e73b21ea4236444b8b20',1,'EpiNLPpb.tests.test_base.cwd']]]
+  ['class_5fweight_0',['class_weight',['../class_epi_n_l_ppb_1_1package_1_1mlearn_1_1mlearn_1_1_m_learn.html#aae97c2eaa9bae518f2f1fc633f29c99a',1,'EpiNLPpb::package::mlearn::mlearn::MLearn']]],
+  ['columnlabels_1',['columnLabels',['../class_epi_n_l_ppb_1_1package_1_1_importer_1_1base_1_1_data_set.html#a63ffa8c2ad871698238ce448767b5b1a',1,'EpiNLPpb::package::Importer::base::DataSet']]],
+  ['corpus_5flevel_2',['CORPUS_LEVEL',['../namespace_epi_n_l_ppb_1_1package_1_1vectorise_1_1constants.html#a2d9d1cbdb8569fab931d3846759b8f3f',1,'EpiNLPpb::package::vectorise::constants']]],
+  ['corpuslevella_3',['corpusLevelLA',['../class_epi_n_l_ppb_1_1package_1_1vectorise_1_1vectorise_1_1_vectorise.html#a0a7e1c913e13174ca08652fd7a176c31',1,'EpiNLPpb::package::vectorise::vectorise::Vectorise']]],
+  ['custombounds_4',['customBounds',['../class_epi_n_l_ppb_1_1package_1_1_importer_1_1base_1_1_demographic.html#a4225615d581c6a948505d8b3c0c58bca',1,'EpiNLPpb::package::Importer::base::Demographic']]],
+  ['customcolumnlabels_5',['customColumnLabels',['../class_epi_n_l_ppb_1_1package_1_1_importer_1_1base_1_1_demographic.html#ac1f5d4ddf4b884dc9db771b53f103041',1,'EpiNLPpb::package::Importer::base::Demographic']]],
+  ['cwd_6',['cwd',['../class_epi_n_l_ppb_1_1package_1_1base_1_1_n_l_p.html#a9cb6f77f1710adaa70fac7003b588fc6',1,'EpiNLPpb.package.base.NLP.cwd'],['../namespace_epi_n_l_ppb_1_1package_1_1base.html#a42d3350c0659a968eaeea4abd7d5d480',1,'EpiNLPpb.package.base.cwd'],['../namespace_epi_n_l_ppb_1_1tests_1_1test__base.html#ac664c39ad255e73b21ea4236444b8b20',1,'EpiNLPpb.tests.test_base.cwd']]]
 ];

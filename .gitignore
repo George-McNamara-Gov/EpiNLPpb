@@ -1,46 +1,12 @@
-# ignore model/POLYFINAL-NLP-PROGRAM directories
+# ignore the .vscode and the model/POLYFINAL-NLP-PROGRAM directories
+.vscode
 model/POLYFINAL-NLP-PROGRAM
 
-# R-specific
-.RData
-.Rhistory
-.Rapp.history
-*-Ex.R
-/*.Rcheck/
-.Rproj.user/
-*_cache/
-/cache/
-*.rdb
-*.rdx
+# ignore ALL __pycache__ directories
+__pycache__
 
-# Python-specific
-.ipynb_checkpoints
-*.py[cod]
-*$py.class
-.pytest_cache/
-__pycache__/
-*.pickle
-*.pkl
-*.h5
-.jupyter/
-
-# Common data files
+# ignore ALL .csv, .xls, .xlsx and .pkl files
 *.csv
+*.xls
 *.xlsx
-*.tsv
-*.parquet
-*.feather
-*.db
-*.sqlite
-
-# Logs
-*.log
-logs/
-
-# IDE specific
-.idea/
-.vscode/
-
-# Temp files
-tmp/
-temp/
+*.pkl

@@ -1,25 +1,8 @@
 var searchData=
 [
-  ['datadisplay_0',['dataDisplay',['../class_epi_n_l_ppb_1_1gui_1_1build_1_1importer_1_1_importer.html#a864e5ebd965e616245e3fb310e863048',1,'EpiNLPpb::gui::build::importer::Importer']]],
-  ['dataset_1',['dataSet',['../class_epi_n_l_ppb_1_1package_1_1_importer_1_1importer_1_1_importer.html#ad7c7ac6cce7e20c541478050f12e130a',1,'EpiNLPpb::package::Importer::importer::Importer']]],
-  ['datecolumnlabel_2',['dateColumnLabel',['../class_epi_n_l_ppb_1_1gui_1_1build_1_1importer_1_1_importer.html#a95a47e5b81c29e4b146666ff937e90d5',1,'EpiNLPpb.gui.build.importer.Importer.dateColumnLabel'],['../class_epi_n_l_ppb_1_1gui_1_1build_1_1info_1_1_info.html#ab47ea566748274f4457d642cc4cf2c42',1,'EpiNLPpb.gui.build.info.Info.dateColumnLabel']]],
-  ['datecolumnlabeldisp_3',['dateColumnLabelDisp',['../class_epi_n_l_ppb_1_1gui_1_1build_1_1info_1_1_info.html#a09d135c85ceca48e51adcddd35930b65',1,'EpiNLPpb::gui::build::info::Info']]],
-  ['dateindex_4',['dateIndex',['../class_epi_n_l_ppb_1_1package_1_1_importer_1_1base_1_1_data_set.html#a5c6c417f95a87955a3d086fdf8c22fa7',1,'EpiNLPpb.package.Importer.base.DataSet.dateIndex'],['../class_epi_n_l_ppb_1_1package_1_1_importer_1_1base_1_1_demographic.html#a0c556964663cceeed76f8703328174bd',1,'EpiNLPpb.package.Importer.base.Demographic.dateIndex']]],
-  ['decisiontree_5',['decisionTree',['../class_epi_n_l_ppb_1_1gui_1_1build_1_1mlearn_1_1_m_learn.html#a81f626aa5e8c48def8fe030309d17d52',1,'EpiNLPpb::gui::build::mlearn::MLearn']]],
-  ['degree_6',['degree',['../class_epi_n_l_ppb_1_1gui_1_1build_1_1info_1_1_info.html#abe724e5995ea32b54440ace56f8c5202',1,'EpiNLPpb.gui.build.info.Info.degree'],['../class_epi_n_l_ppb_1_1gui_1_1build_1_1mlearn_1_1_m_learn.html#a7da84ddb6f85aaa64ad3ab23c490876c',1,'EpiNLPpb.gui.build.mlearn.MLearn.degree']]],
-  ['degreedisp_7',['degreeDisp',['../class_epi_n_l_ppb_1_1gui_1_1build_1_1info_1_1_info.html#aa8d85f2e924c80b08806441eec26d8db',1,'EpiNLPpb::gui::build::info::Info']]],
-  ['degreeinput_8',['degreeInput',['../class_epi_n_l_ppb_1_1gui_1_1build_1_1mlearn_1_1_m_learn.html#ade0c43149031158d2da22997fff0a70d',1,'EpiNLPpb::gui::build::mlearn::MLearn']]],
-  ['degreelabel_9',['degreeLabel',['../class_epi_n_l_ppb_1_1gui_1_1build_1_1mlearn_1_1_m_learn.html#ab5bd2b7e24c1ed1b7b3eb0776dad9b30',1,'EpiNLPpb::gui::build::mlearn::MLearn']]],
-  ['deldir_10',['deldir',['../namespace_epi_n_l_ppb_1_1tests_1_1test__base.html#aed5f31dbdf19bd43413fa87db4528cea',1,'EpiNLPpb::tests::test_base']]],
-  ['demoage_11',['demoAge',['../class_epi_n_l_ppb_1_1gui_1_1build_1_1importer_1_1_importer.html#a7de01ba85b90da8f4c6d965c20c61188',1,'EpiNLPpb::gui::build::importer::Importer']]],
-  ['demodate_12',['demoDate',['../class_epi_n_l_ppb_1_1gui_1_1build_1_1importer_1_1_importer.html#a6eef0b5b9c2a6e854a3ba58b4d4bcd38',1,'EpiNLPpb::gui::build::importer::Importer']]],
-  ['demographic_13',['demographic',['../class_epi_n_l_ppb_1_1package_1_1_importer_1_1importer_1_1_importer.html#a6ea2e1e732a1fb48a619cfbf3c55ce7d',1,'EpiNLPpb::package::Importer::importer::Importer']]],
-  ['demohosp_14',['demoHosp',['../class_epi_n_l_ppb_1_1gui_1_1build_1_1importer_1_1_importer.html#aca60b07bf3d9e08ea6d733c402c7b144',1,'EpiNLPpb::gui::build::importer::Importer']]],
-  ['demosex_15',['demoSex',['../class_epi_n_l_ppb_1_1gui_1_1build_1_1importer_1_1_importer.html#adfd91f42ec17899526e942b6d388f488',1,'EpiNLPpb::gui::build::importer::Importer']]],
-  ['dframe_16',['dFrame',['../class_epi_n_l_ppb_1_1gui_1_1build_1_1filter_1_1_filter.html#a4db157a48643b5ea94a48ed67b9aa913',1,'EpiNLPpb::gui::build::filter::Filter']]],
-  ['directoryname_17',['directoryName',['../class_epi_n_l_ppb_1_1package_1_1base_1_1_n_l_p.html#aab616234c3e8574a8b1767efea4e0ecb',1,'EpiNLPpb::package::base::NLP']]],
-  ['displaymaxage_18',['displayMaxAge',['../class_epi_n_l_ppb_1_1gui_1_1build_1_1filter_1_1_filter.html#a6a44c71d136c0932a818c1f91330634c',1,'EpiNLPpb::gui::build::filter::Filter']]],
-  ['displaymaxyear_19',['displayMaxYear',['../class_epi_n_l_ppb_1_1gui_1_1build_1_1filter_1_1_filter.html#ae03b3f13722a373c254e3efa323d286d',1,'EpiNLPpb::gui::build::filter::Filter']]],
-  ['displayminage_20',['displayMinAge',['../class_epi_n_l_ppb_1_1gui_1_1build_1_1filter_1_1_filter.html#a20735da2509b42c385031ff18294098e',1,'EpiNLPpb::gui::build::filter::Filter']]],
-  ['displayminyear_21',['displayMinYear',['../class_epi_n_l_ppb_1_1gui_1_1build_1_1filter_1_1_filter.html#a1dc357254de038b44fa334de35830cb4',1,'EpiNLPpb::gui::build::filter::Filter']]]
+  ['dataset_0',['dataSet',['../class_epi_n_l_ppb_1_1package_1_1_importer_1_1importer_1_1_importer.html#ad7c7ac6cce7e20c541478050f12e130a',1,'EpiNLPpb::package::Importer::importer::Importer']]],
+  ['datecolumnlabel_1',['dateColumnLabel',['../class_epi_n_l_ppb_1_1package_1_1_importer_1_1base_1_1_demographic.html#a022df29f334dfe810f19fd1f91cac7c5',1,'EpiNLPpb::package::Importer::base::Demographic']]],
+  ['deldir_2',['deldir',['../namespace_epi_n_l_ppb_1_1tests_1_1test__base.html#aed5f31dbdf19bd43413fa87db4528cea',1,'EpiNLPpb::tests::test_base']]],
+  ['demographic_3',['demographic',['../class_epi_n_l_ppb_1_1package_1_1_importer_1_1importer_1_1_importer.html#a6ea2e1e732a1fb48a619cfbf3c55ce7d',1,'EpiNLPpb::package::Importer::importer::Importer']]],
+  ['directoryname_4',['directoryName',['../class_epi_n_l_ppb_1_1package_1_1base_1_1_n_l_p.html#aab616234c3e8574a8b1767efea4e0ecb',1,'EpiNLPpb::package::base::NLP']]]
 ];

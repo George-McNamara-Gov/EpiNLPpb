@@ -1,19 +1,10 @@
 var searchData=
 [
-  ['nameexistsexception_0',['NameExistsException',['../class_epi_n_l_ppb_1_1package_1_1exceptions_1_1_name_exists_exception.html',1,'EpiNLPpb::package::exceptions']]],
-  ['negpolynomialdegreeexception_1',['NegPolynomialDegreeException',['../class_epi_n_l_ppb_1_1package_1_1exceptions_1_1_neg_polynomial_degree_exception.html',1,'EpiNLPpb::package::exceptions']]],
-  ['negrbfgammaexception_2',['NegRBFGammaException',['../class_epi_n_l_ppb_1_1package_1_1exceptions_1_1_neg_r_b_f_gamma_exception.html',1,'EpiNLPpb::package::exceptions']]],
-  ['negsigmoidgammaexception_3',['NegSigmoidGammaException',['../class_epi_n_l_ppb_1_1package_1_1exceptions_1_1_neg_sigmoid_gamma_exception.html',1,'EpiNLPpb::package::exceptions']]],
-  ['negtestsizeexception_4',['NegTestSizeException',['../class_epi_n_l_ppb_1_1package_1_1exceptions_1_1_neg_test_size_exception.html',1,'EpiNLPpb::package::exceptions']]],
-  ['negtrainsizeexception_5',['NegTrainSizeException',['../class_epi_n_l_ppb_1_1package_1_1exceptions_1_1_neg_train_size_exception.html',1,'EpiNLPpb::package::exceptions']]],
-  ['newestblock_6',['NewestBlock',['../class_epi_n_l_ppb_1_1package_1_1_importer_1_1extractors_1_1extractors_1_1_newest_block.html',1,'EpiNLPpb::package::Importer::extractors::extractors']]],
-  ['nlp_7',['NLP',['../class_epi_n_l_ppb_1_1package_1_1base_1_1_n_l_p.html',1,'EpiNLPpb::package::base']]],
-  ['noflagfieldexception_8',['NoFlagFieldException',['../class_epi_n_l_ppb_1_1package_1_1exceptions_1_1_no_flag_field_exception.html',1,'EpiNLPpb::package::exceptions']]],
-  ['nolatechniquesexception_9',['NoLATechniquesException',['../class_epi_n_l_ppb_1_1package_1_1exceptions_1_1_no_l_a_techniques_exception.html',1,'EpiNLPpb::package::exceptions']]],
-  ['nopolynomialparameterexception_10',['NoPolynomialParameterException',['../class_epi_n_l_ppb_1_1package_1_1exceptions_1_1_no_polynomial_parameter_exception.html',1,'EpiNLPpb::package::exceptions']]],
-  ['norbfgammaexception_11',['NoRBFGammaException',['../class_epi_n_l_ppb_1_1package_1_1exceptions_1_1_no_r_b_f_gamma_exception.html',1,'EpiNLPpb::package::exceptions']]],
-  ['nosigmoidparameterexception_12',['NoSigmoidParameterException',['../class_epi_n_l_ppb_1_1package_1_1exceptions_1_1_no_sigmoid_parameter_exception.html',1,'EpiNLPpb::package::exceptions']]],
-  ['notenoughclassesexception_13',['NotEnoughClassesException',['../class_epi_n_l_ppb_1_1package_1_1exceptions_1_1_not_enough_classes_exception.html',1,'EpiNLPpb::package::exceptions']]],
-  ['notextfieldsexception_14',['NoTextFieldsException',['../class_epi_n_l_ppb_1_1package_1_1exceptions_1_1_no_text_fields_exception.html',1,'EpiNLPpb::package::exceptions']]],
-  ['notokeniserexception_15',['NoTokeniserException',['../class_epi_n_l_ppb_1_1package_1_1exceptions_1_1_no_tokeniser_exception.html',1,'EpiNLPpb::package::exceptions']]]
+  ['maclearninputexception_0',['MacLearnInputException',['../class_epi_n_l_ppb_1_1package_1_1exceptions_1_1_mac_learn_input_exception.html',1,'EpiNLPpb::package::exceptions']]],
+  ['maxdepthexception_1',['MaxDepthException',['../class_epi_n_l_ppb_1_1package_1_1exceptions_1_1_max_depth_exception.html',1,'EpiNLPpb::package::exceptions']]],
+  ['minsamplesexception_2',['MinSamplesException',['../class_epi_n_l_ppb_1_1package_1_1exceptions_1_1_min_samples_exception.html',1,'EpiNLPpb::package::exceptions']]],
+  ['mlalgtypeexception_3',['MLAlgTypeException',['../class_epi_n_l_ppb_1_1package_1_1exceptions_1_1_m_l_alg_type_exception.html',1,'EpiNLPpb::package::exceptions']]],
+  ['mlearn_4',['MLearn',['../class_epi_n_l_ppb_1_1package_1_1mlearn_1_1mlearn_1_1_m_learn.html',1,'EpiNLPpb::package::mlearn::mlearn']]],
+  ['mlearnexception_5',['MLearnException',['../class_epi_n_l_ppb_1_1package_1_1exceptions_1_1_m_learn_exception.html',1,'EpiNLPpb::package::exceptions']]],
+  ['moredatathanrecordsexception_6',['MoreDataThanRecordsException',['../class_epi_n_l_ppb_1_1package_1_1exceptions_1_1_more_data_than_records_exception.html',1,'EpiNLPpb::package::exceptions']]]
 ];

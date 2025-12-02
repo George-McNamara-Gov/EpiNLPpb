@@ -5,6 +5,6 @@ var dir_49723ebcbd6fe8f0b24287e7094945fb =
     [ "mlearn", "dir_80825bb95fbca289f00b372d30e368b8.html", "dir_80825bb95fbca289f00b372d30e368b8" ],
     [ "vectorise", "dir_27606d9352e1ee918718a911c0baa161.html", "dir_27606d9352e1ee918718a911c0baa161" ],
     [ "__init__.py", "package_2____init_____8py.html", null ],
-    [ "base.py", "package_2base_8py.html", "package_2base_8py" ],
+    [ "base.py", "base_8py.html", "base_8py" ],
     [ "exceptions.py", "exceptions_8py.html", "exceptions_8py" ]
 ];

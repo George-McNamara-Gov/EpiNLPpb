@@ -1,15 +1,15 @@
 var class_epi_n_l_ppb_1_1package_1_1_importer_1_1base_1_1_demographic =
 [
-    [ "__init__", "class_epi_n_l_ppb_1_1package_1_1_importer_1_1base_1_1_demographic.html#afd7d5274424e8c405a11b67115f918b9", null ],
-    [ "demographicCheck", "class_epi_n_l_ppb_1_1package_1_1_importer_1_1base_1_1_demographic.html#a187a38376ab42d230c854659bcccdbdf", null ],
-    [ "ageIndex", "class_epi_n_l_ppb_1_1package_1_1_importer_1_1base_1_1_demographic.html#aa4061a7109b6eec3951b56d63e12c2d8", null ],
-    [ "dateIndex", "class_epi_n_l_ppb_1_1package_1_1_importer_1_1base_1_1_demographic.html#a0c556964663cceeed76f8703328174bd", null ],
-    [ "hospIndex", "class_epi_n_l_ppb_1_1package_1_1_importer_1_1base_1_1_demographic.html#aa9f33c0bb3b70ae1936f917af0f69f0e", null ],
+    [ "__init__", "class_epi_n_l_ppb_1_1package_1_1_importer_1_1base_1_1_demographic.html#a2151ce3c51dade17e05873ea2145bd85", null ],
+    [ "filter", "class_epi_n_l_ppb_1_1package_1_1_importer_1_1base_1_1_demographic.html#a2c85ee1de0700f67fb3b615d429403e4", null ],
+    [ "ageBounds", "class_epi_n_l_ppb_1_1package_1_1_importer_1_1base_1_1_demographic.html#aef9a0648413017e053216905468e26e9", null ],
+    [ "ageColumnLabel", "class_epi_n_l_ppb_1_1package_1_1_importer_1_1base_1_1_demographic.html#ac32ff63812326f9f41019f9d7d3da896", null ],
+    [ "customBounds", "class_epi_n_l_ppb_1_1package_1_1_importer_1_1base_1_1_demographic.html#a4225615d581c6a948505d8b3c0c58bca", null ],
+    [ "customColumnLabels", "class_epi_n_l_ppb_1_1package_1_1_importer_1_1base_1_1_demographic.html#ac1f5d4ddf4b884dc9db771b53f103041", null ],
+    [ "dateColumnLabel", "class_epi_n_l_ppb_1_1package_1_1_importer_1_1base_1_1_demographic.html#a022df29f334dfe810f19fd1f91cac7c5", null ],
     [ "hospital", "class_epi_n_l_ppb_1_1package_1_1_importer_1_1base_1_1_demographic.html#a9a424ecbb807150dae52e25e6d05968f", null ],
-    [ "maxAge", "class_epi_n_l_ppb_1_1package_1_1_importer_1_1base_1_1_demographic.html#a3eb12f424554b9e8db1f23529ccb84dc", null ],
-    [ "maxYear", "class_epi_n_l_ppb_1_1package_1_1_importer_1_1base_1_1_demographic.html#a5f56ad8455fecc2657efe9ae0da9104e", null ],
-    [ "minAge", "class_epi_n_l_ppb_1_1package_1_1_importer_1_1base_1_1_demographic.html#af55726439c6f7f8b6c17f2cdaa10c993", null ],
-    [ "minYear", "class_epi_n_l_ppb_1_1package_1_1_importer_1_1base_1_1_demographic.html#aac11472c346635805718e1e790b6752f", null ],
+    [ "hospitalColumnLabel", "class_epi_n_l_ppb_1_1package_1_1_importer_1_1base_1_1_demographic.html#ace34e445506198ea7c63de2eb192fa76", null ],
     [ "sex", "class_epi_n_l_ppb_1_1package_1_1_importer_1_1base_1_1_demographic.html#acdc3b500cd2fc73302bceb5abbb7acd8", null ],
-    [ "sexIndex", "class_epi_n_l_ppb_1_1package_1_1_importer_1_1base_1_1_demographic.html#a0d11853fb58c904c458d871590ea9bd8", null ]
+    [ "sexColumnLabel", "class_epi_n_l_ppb_1_1package_1_1_importer_1_1base_1_1_demographic.html#a55d913ebfce61b4c151fea85dbede746", null ],
+    [ "yearBounds", "class_epi_n_l_ppb_1_1package_1_1_importer_1_1base_1_1_demographic.html#ac5493eede62805e4d49149150b85fe7f", null ]
 ];

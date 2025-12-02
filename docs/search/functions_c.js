@@ -1,5 +1,7 @@
 var searchData=
 [
-  ['nameentered_0',['nameEntered',['../class_epi_n_l_ppb_1_1gui_1_1build_1_1create_1_1_create.html#a6394fcd791f79ee01320cd986b08adf2',1,'EpiNLPpb::gui::build::create::Create']]],
-  ['ntlk_5finstall_1',['ntlk_install',['../namespace_epi_n_l_ppb_1_1nltk__install__proxy.html#a527129d2637c087d772bedfbb524f33d',1,'EpiNLPpb::nltk_install_proxy']]]
+  ['postag_0',['posTag',['../namespace_epi_n_l_ppb_1_1package_1_1vectorise_1_1nltkvectorise.html#a36e33bf86d26d1cd371c2b9087cfe0aa',1,'EpiNLPpb::package::vectorise::nltkvectorise']]],
+  ['precisionandrecall_1',['precisionAndRecall',['../namespace_epi_n_l_ppb_1_1package_1_1evaluate_1_1base.html#a3819539c79bf310681c2920ecad55d68',1,'EpiNLPpb::package::evaluate::base']]],
+  ['preparetexts_2',['prepareTexts',['../namespace_epi_n_l_ppb_1_1package_1_1vectorise_1_1nltkvectorise.html#a0b6557199444ac845fb014229bb962c7',1,'EpiNLPpb::package::vectorise::nltkvectorise']]],
+  ['punctokeniser_3',['puncTokeniser',['../namespace_epi_n_l_ppb_1_1package_1_1vectorise_1_1nltkvectorise.html#a08a8e959a40a46cb5f5e533e13c354a7',1,'EpiNLPpb::package::vectorise::nltkvectorise']]]
 ];

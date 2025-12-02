@@ -1,5 +1,5 @@
 '''
-Main module of the package/vectorise package to be used in package/base.
+Main module of the package/vectorise package to be used in package/base.py.
 
 Classes:
 
@@ -15,13 +15,13 @@ Misc Variables:
 
 Exceptions:
 
-    NoLATechniquesException
-    NoTokeniserException
+    VectoriseException
     TokeniserException
     PreLAException
     TokenLevelException
     TextLevelException
     CorpusLevelException
+    NGramException
 '''
 from . import base as b
 from . import constants as c
@@ -32,12 +32,13 @@ from .. import exceptions as e
 
 class Vectorise:
     '''
-    A class to be consturcted in package/base to vectorise records.
+    A class to be consturcted in package/base.py to vectorise records.
 
     ...
 
     Attributes
     ----------
+    Constructed by running the initialise() method:
     tokeniser : str
         The name of the tokeniser to use.
     preLAChanges : list
@@ -48,34 +49,89 @@ class Vectorise:
         A list of the names of text level LA techniques to use.
     corpusLevelLA : str
         The name of the corpus level LA technique to use.
-    textIndices : list
-        A list of indices of free text fields in a record.
+    ngramRange : tuple
+        Lower and upper bound for n-gram sizes (inclusive).
+    vectoriser : Union[CountVectorizer, TfidfVectorizer]
+        The bag-of-words vectoriser.
 
     Methods
     -------
+    initialise(str, list, list, list, str, tuple)
+        Checks constructor inputs and creates attributes.
     buildVector(str) -> list
         Creates a vector, of consistent length, representing some input text.
     recordToVector(list) -> list
         Creates a vector, of consistent length, representing some input record.
-    vectorise(list) -> list
+    vectorise(list, list) -> tuple[sparse.csr_matrix, sparse.csr_matrix]
         Vectorises the input training and testing data.
-    vectoriseSingle(list) -> sparse.crs_matrix
-        Vectorises a single record after the algorithm has been trained.
-    vectoriseList(list)
-        Converts a list of records into a list of vectors.
-    setTextIndices(list)
-        Changes the textIndices attribute.
+    vectoriseList(list) -> sparse.csr_matrix
+        Converts a list of records into a list of vectors. Can only
+        be used after the vectorise() method has been run.
     '''
 
-    def __init__(self, 
-                 tokeniser : str, 
-                 preLAChanges : list, 
-                 tokenLevelLA : list, 
-                 textLevelLA : list,
-                 corpusLevelLA : str,
-                 textIndices : list):
+    def __init__(self,
+                 arg_dict : dict = None, 
+                 tokeniser : str = '',
+                 preLAChanges : list = [], 
+                 tokenLevelLA : list = [], 
+                 textLevelLA : list = [],
+                 corpusLevelLA : str = '',
+                 ngramRange : tuple = (1, 1)):
         '''
-        Checks inputs are valid and constructs attributes for Vectorise object.
+        Passes inputs from either arg_dict or keyword arguments.
+
+        Parameters
+        ----------
+        arg_dict : dict
+            A dictionary containing constructor arguments.
+        tokeniser : str
+            The name of the tokeniser to use.
+        preLAChanges : list
+            A list of the names of pre LA Changes to use.
+        tokenLevelLA : list
+            A list of the names of token level LA techniques to use.
+        textLevelLA : list
+            A list of the names of text level LA techniques to use.
+        corpusLevelLA : str
+            The name of the corpus level LA technique to use.
+        ngramRange : tuple
+            Lower and upper bound for n-gram sizes (inclusive).
+        '''
+        if arg_dict is not None:
+            if not isinstance(arg_dict, dict):
+                raise e.VectoriseException(
+                    'arg_dict must be a dictionary.'
+                )
+            
+            if 'tokeniser' in arg_dict:
+                tokeniser = arg_dict['tokeniser']
+            if 'preLAChanges' in arg_dict:
+                preLAChanges = arg_dict['preLAChanges']
+            if 'tokenLevelLA' in arg_dict:
+                tokenLevelLA = arg_dict['tokenLevelLA']
+            if 'textLevelLA' in arg_dict:
+                textLevelLA = arg_dict['textLevelLA']
+            if 'corpusLevelLA' in arg_dict:
+                corpusLevelLA = arg_dict['corpusLevelLA']
+            if 'ngramRange' in arg_dict:
+                ngramRange = arg_dict['ngramRange']
+                
+        self.initialise(tokeniser,
+                        preLAChanges,
+                        tokenLevelLA,
+                        textLevelLA,
+                        corpusLevelLA,
+                        ngramRange)
+
+    def initialise(self,
+                   tokeniser : str = '', 
+                   preLAChanges : list = [], 
+                   tokenLevelLA : list = [], 
+                   textLevelLA : list = [],
+                   corpusLevelLA : str = '',
+                   ngramRange : tuple = (1, 1)):
+        '''
+        Checks constructor inputs and creates attributes.
 
         Parameters
         ----------
@@ -89,16 +145,45 @@ class Vectorise:
             A list of the names of text level LA techniques to use.
         corpusLevelLA : str
             The name of the corpus level LA technique to use.
-        textIndicies : list
-            List of indicies of the text fields to be processed.
+        ngramRange : tuple
+            Lower and upper bound for n-gram sizes (inclusive).
+
+        Returns
+        -------
+        None
         '''
+        if not isinstance(tokeniser, str):
+            raise e.TokeniserException(
+                'tokeniser must be a string.'
+            )
+        if not isinstance(preLAChanges, list):
+            raise e.PreLAException(
+                'preLAChanges must be a list.'
+            )
+        if not isinstance(tokenLevelLA, list):
+            raise e.TokenLevelException(
+                'tokenLevelLA must be a list.'
+            )
+        if not isinstance(textLevelLA, list):
+            raise e.TextLevelException(
+                'textLevelLA must be a list.'
+            )
+        if not isinstance(corpusLevelLA, str):
+            raise e.CorpusLevelException(
+                'corpusLevelLA must be a string.'
+            )
+        if not isinstance(ngramRange, tuple):
+            raise e.NGramException(
+                'ngramRange must be a tuple.'
+            )
+        
         if tokenLevelLA == [] and textLevelLA == [] and corpusLevelLA == '':
-            raise e.NoLATechniquesException(
+            raise e.PreLAException(
                 'Must have at least one token, text or corpus level LA '
                 'technique level LA technique to construct a vector.'
                 )
         if tokenLevelLA != [] and (tokeniser == ''):
-            raise e.NoTokeniserException(
+            raise e.TokeniserException(
                 'Cannot use token level techniques without a tokeniser.'
                 )
         if tokeniser not in c.TOKENISER_NAMES:
@@ -124,12 +209,30 @@ class Vectorise:
             raise e.CorpusLevelException(
                 f'{corpusLevelLA} is not in {c.CORPUS_LEVEL}.'
                 )
+        if not isinstance(ngramRange[0], int):
+            raise e.NGramException(
+                'ngramRange lower bound must be an int.'
+            )
+        if not isinstance(ngramRange[1], int):
+            raise e.NGramException(
+                'ngramRange upper bound must be an int.'
+            )
+        if ngramRange[0] <= 0:
+            raise e.NGramException(
+                'ngramRange lower bound must be positive.'
+            )
+        if ngramRange[1] < ngramRange[0]:
+            raise e.NGramException(
+                'ngramRange upper bound must be greater than or equal to ',
+                'ngramRange lower bound.'
+            )
         self.tokeniser = tokeniser
         self.preLAChanges = preLAChanges
         self.tokenLevelLA = tokenLevelLA
         self.textLevelLA = textLevelLA
         self.corpusLevelLA = corpusLevelLA
-        self.textIndices = textIndices
+        self.ngramRange = ngramRange
+        self.vectoriser = None
 
     def buildVector(self, 
                     text : str) -> list:
@@ -186,13 +289,14 @@ class Vectorise:
             The vector representing the input record.
         '''
         vector = []
-        for index in self.textIndices:
-            vector = vector + self.buildVector(str(record[index]))
+        for text in record[0: len(record)]:
+            vector = vector + self.buildVector(str(text))
         return vector
 
     def vectorise(self, 
                   trainRecords : list, 
-                  testRecords : list) -> tuple[sparse.csr_matrix, sparse.csr_matrix]:
+                  testRecords : list) -> tuple[sparse.csr_matrix, 
+                                               sparse.csr_matrix]:
         '''
         Vectorises the input training and testing data.
 
@@ -205,47 +309,34 @@ class Vectorise:
 
         Returns
         -------
-        outTrainVecs : csr_matrix
+        outTrainVecs : sparse.csr_matrix
             The vectorised training records.
-        outTestVectors : crs_matrix
+        outTestVectors : sparse.crs_matrix
             The vectorised testing records.
         '''
-        self.vectoriser = None
         if 'BAG_OF_WORDS_C' == self.corpusLevelLA:
             trainVecs, testVecs, self.vectoriser = n.bagOfWordsC(
                 trainRecords, 
                 testRecords,
-                self.textIndices
+                self.ngramRange
                 )
         if 'MOD_BAG_OF_WORDS_C' == self.corpusLevelLA:
             trainVecs, testVecs, self.vectoriser = n.modBagOfWordsC(
                 trainRecords, 
                 testRecords,
-                self.textIndices
+                self.ngramRange
                 )
         if 'BAG_OF_WORDS_F' == self.corpusLevelLA:
             trainVecs, testVecs, self.vectoriser = n.bagOfWordsF(
                 trainRecords, 
                 testRecords,
-                self.textIndices
+                self.ngramRange
                 )
         if 'MOD_BAG_OF_WORDS_F' == self.corpusLevelLA:
             trainVecs, testVecs, self.vectoriser = n.modBagOfWordsF(
                 trainRecords, 
                 testRecords,
-                self.textIndices
-                )
-        if 'BAG_OF_WORDS_H' == self.corpusLevelLA:
-            trainVecs, testVecs, self.vectoriser = n.bagOfWordsH(
-                trainRecords, 
-                testRecords,
-                self.textIndices
-                )
-        if 'MOD_BAG_OF_WORDS_H' == self.corpusLevelLA:
-            trainVecs, testVecs, self.vectoriser = n.modBagOfWordsH(
-                trainRecords, 
-                testRecords,
-                self.textIndices
+                self.ngramRange
                 )
         outTrainVecs = sparse.csr_matrix(
             [self.recordToVector(record) for record in trainRecords]
@@ -260,38 +351,10 @@ class Vectorise:
  
         return (outTrainVecs, outTestVecs)
     
-    def vectoriseSingle(self, 
-                        record : list):
+    def vectoriseList(self, records : list) -> sparse.csr_matrix:
         '''
-        Vectorises a single record after the algorithm has been trained.
-
-        Parameters
-        ----------
-        record : list
-            The record to be vectorised
-
-        Returns
-        -------
-        vectorList : sparse.crs_matrix
-            A sparse matrix containing a single vector. 
-        '''
-        text = n.recordToCorpusText(record, self.textIndices)
-        if self.corpusLevelLA in ['MOD_BAG_OF_WORDS_C', 
-                                  'MOD_BAG_OF_WORDS_F', 
-                                  'MOD_BAG_OF_WORDS_H']:
-            text = n.prepareTexts([text])[0]
-        vectPart1 = self.vectoriser.transform([text])
-        vectPart2 = sparse.csr_matrix([self.recordToVector(record)])
-        if self.corpusLevelLA == '':
-            vectorList = vectPart2
-        else:
-            vectorList = hstack((vectPart1, vectPart2))
-        
-        return vectorList
-
-    def vectoriseList(self, records : list):
-        '''
-        Converts a list of records into a list of vectors.
+        Converts a list of records into a list of vectors. Can only
+        be used after the vectorise() method has been run.
 
         Parameters
         ----------
@@ -300,13 +363,11 @@ class Vectorise:
 
         Returns
         -------
-        vectorList : list
+        vectorList : sparse.csr_matrix
             The list of vectors corresponding to the input records.
         '''
-        texts = [n.recordToCorpusText(rec, self.textIndices) for rec in records]
-        if self.corpusLevelLA in ['MOD_BAG_OF_WORDS_C', 
-                                  'MOD_BAG_OF_WORDS_F', 
-                                  'MOD_BAG_OF_WORDS_H']:
+        texts = [n.recordToCorpusText(rec) for rec in records]
+        if self.corpusLevelLA in ['MOD_BAG_OF_WORDS_C', 'MOD_BAG_OF_WORDS_F']:
             texts = n.prepareTexts(texts)
         vectPart1 = self.vectoriser.transform(texts)
         vectPart2 = sparse.csr_matrix([self.recordToVector(rec) for rec in records])
@@ -316,18 +377,3 @@ class Vectorise:
             vectorList = hstack((vectPart1, vectPart2))
         
         return vectorList
-    
-    def setTextIndices(self, newTextIndices : list):
-        '''
-        Changes the textIndices attribute.
-
-        Parameters
-        ----------
-        newTextIndices : list
-            The new value for the textIndices attribute.
-
-        Returns
-        -------
-        None
-        '''
-        self.textIndices = newTextIndices

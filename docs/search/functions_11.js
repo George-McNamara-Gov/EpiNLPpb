@@ -1,6 +1,7 @@
 var searchData=
 [
-  ['updateavailablerecords_0',['updateAvailableRecords',['../class_epi_n_l_ppb_1_1gui_1_1build_1_1extract_1_1_extract.html#ae2a13811771b874c21bae4ba4a2b1924',1,'EpiNLPpb::gui::build::extract::Extract']]],
-  ['updateinfo_1',['updateInfo',['../class_epi_n_l_ppb_1_1gui_1_1build_1_1info_1_1_info.html#a503482ee6384838cb85321ee46b7bcdb',1,'EpiNLPpb::gui::build::info::Info']]],
-  ['usealldatafunc_2',['useAllDataFunc',['../class_epi_n_l_ppb_1_1gui_1_1build_1_1filter_1_1_filter.html#a3a49ccf48fba2e4b51e97f809a405b9d',1,'EpiNLPpb::gui::build::filter::Filter']]]
+  ['vectorise_0',['vectorise',['../class_epi_n_l_ppb_1_1package_1_1vectorise_1_1vectorise_1_1_vectorise.html#af764d9311b1816f315e09355ba5f1887',1,'EpiNLPpb::package::vectorise::vectorise::Vectorise']]],
+  ['vectoriselist_1',['vectoriseList',['../class_epi_n_l_ppb_1_1package_1_1vectorise_1_1vectorise_1_1_vectorise.html#ae964b173268b5f962f71a0c7d88305bd',1,'EpiNLPpb::package::vectorise::vectorise::Vectorise']]],
+  ['viewevaluation_2',['viewEvaluation',['../class_epi_n_l_ppb_1_1package_1_1base_1_1_n_l_p.html#ad3a4cd74f09510908400b58e6c546383',1,'EpiNLPpb::package::base::NLP']]],
+  ['viewparameters_3',['viewParameters',['../class_epi_n_l_ppb_1_1package_1_1base_1_1_n_l_p.html#af1485e55f72bbb19c7adb95122914413',1,'EpiNLPpb::package::base::NLP']]]
 ];

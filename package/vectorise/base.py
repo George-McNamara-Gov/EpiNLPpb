@@ -46,7 +46,7 @@ def asciiConversion(text : str) -> list:
     Parameters
     ----------
     text : str
-        The text to be converted into ascii characters
+        The text to be converted into ascii characters.
 
     Returns
     -------

@@ -1,5 +1,5 @@
 '''
-Main module of the package/evaluate package to be used in package/base.
+Main module of the package/evaluate package to be used in package/base.py.
 
 Classes:
 
@@ -22,15 +22,12 @@ Exceptions:
     BadPredictedFlagException
     TimesSpacesNotEqualException
 '''
-from . import constants as c
 from . import base as b
-import matplotlib.pyplot as plt
-import numpy as np
 from .. import exceptions as e
 
 class Evaluate:
     '''
-    A class to be constructed in package/base to evaluate the NLP program.
+    A class to be constructed in package/base.py to evaluate an NLP program.
 
     ...
 
@@ -41,9 +38,9 @@ class Evaluate:
     predictedFlags : list
         The NLP program's predicted flags for the test data.
     times : list
-        The time taken by various processes in constructing the NLP program.
+        The times taken by various processes in constructing an NLP program.
     spaces : list
-        The peak memory used by various processes in constructing the NLP 
+        The peak memories used by various processes in constructing an NLP 
         program.
 
     Constructed by running the evaluate() method:
@@ -61,10 +58,6 @@ class Evaluate:
     evaluate() -> dict
         Sets prec, rec, totalTime and totalSpace attributes and produces a
         dictionary with the evaluation.
-    radialPlot()
-        Displays a radial plot of the key evaluation measures.
-    timeSpace()
-        Displays a breakdown of time and space usage.
     '''
     def __init__(self, 
                  actualFlags : list, 
@@ -82,9 +75,9 @@ class Evaluate:
         predictedFlags : list
             The NLP program's predicted flags for the test data.
         times : list
-            The time taken by various processes in constructing the NLP program.
+            The times taken by various processes in constructing the NLP program.
         spaces : list
-            The memory used by various processes in constructing the NLP program.
+            The memories used by various processes in constructing the NLP program.
         '''
         if actualFlags == []:
             raise e.EmptyActualFlagsException(
@@ -163,73 +156,3 @@ class Evaluate:
                         MLPredictionSpace = self.spaces[6],
                         )
         return outputDic
-    
-    def radialPlot(self):
-        '''
-        Displays a radial plot of the key evaluation measures.
-
-        Parameters
-        ----------
-        None
-
-        Returns
-        -------
-        None
-        '''
-        values = [self.prec, self.rec, 1 - self.totalTime / c.TIME_MAX,
-                  1 - self.totalSpace / c.SPACE_MAX, self.prec]
-        labels = ['Precision','Recall','Normalised Time','Normalise Memory']
-        plt.figure(figsize=(10, 6))
-        plt.subplot(polar=True)
-        theta = np.linspace(0, 2 * np.pi, len(values))
-        _, _ = plt.thetagrids(
-            range(0, 360, int(360/len(labels))), (labels)
-            )
-        plt.plot(theta, values)
-        plt.fill(theta, values, 'b', alpha=0.1)
-        plt.show()
-  
-    def timeSpacePlot(self):
-        '''
-        Displays a breakdown of time and space usage.
-
-        Parameters
-        ----------
-        None
-
-        Returns
-        -------
-        None
-        '''
-        labels = ['Import', 
-            'Filter', 
-            'Training Data \n Extraction', 
-            'Testing Data \n Extraction',
-            'Data \n Vectorise',
-            'ML Algorithm \n Training',
-            'ML Algorithm \n Prediction',
-            'Evaluation']
-        
-        self.spaces = [space/(1024*1024) for space in self.spaces]
-        
-        fig, ax1 = plt.subplots()
-
-        X_axis = np.arange(len(labels))
-
-        color = 'tab:red'
-        ax1.set_xlabel('Process')
-        ax1.set_ylabel('Time taken (s)', color=color)
-        ax1.bar(X_axis - 0.2, self.times, width= 0.4, color=color)
-        ax1.tick_params(axis='y', labelcolor=color)
-        ax1.set(xticks=(list(range(0,8))))
-        ax1.set(xticklabels=(labels))
-
-        ax2 = ax1.twinx()
-
-        color = 'tab:blue'
-        ax2.set_ylabel('Peak memory used (MB)', color=color)
-        ax2.bar(X_axis + 0.2, self.spaces, width = 0.4, color=color)
-        ax2.tick_params(axis='y', labelcolor=color)
-
-        fig.tight_layout()
-        plt.show()

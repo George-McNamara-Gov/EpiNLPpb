@@ -1,8 +1,6 @@
 # ACT Health Epidemiology NLP Program Builder (EpiNLP Builder)
 
-This package builds customised Natural Language Processing (NLP) programs for classifying free text snippets based on the presence of a specified characteristic. These NLP programs provide binary classifications of free text based on Linguistic Analysis and Machine Learning techniques. The output of these programs is an additional variable, in an existing data set containing free text, indicating a classification of the free text. This project was initially created to identify Emergency Department presentations related to suicide or self-harm from triage notes. In the case of suicide or self-harm related Emergency Department presentations, this classification process is more efficient than manual annotation, more precise than keyword searching, and more comprehensive than classifying based on ICD-10 clinical codes. 
-
-The building process can be operated through a Graphical User Interface (GUI). The GUI guides the user through uploading annotated free text data, inputting or uploading customisation parameters and then creating, evaluating, exporting, and utilising an NLP program. This GUI is not complete in version 1.0 and will be finalised in a later release. It is recommended to use the source code directly, as detailed below. The NLP programs are customised by the choice of annotated data, demographic, data size and distribution, linguistic analysis techniques and machine learning algorithm. This enables users to create and use NLP programs optimised to their needs. 
+This package builds customised Natural Language Processing (NLP) programs for classifying free text snippets based on the presence of a specified characteristic. These NLP programs provide binary classifications of free text based on Linguistic Analysis and Machine Learning techniques. The output of these programs is an additional variable, in an existing data set containing free text, indicating a classification of the free text. This project was initially created to identify Emergency Department presentations related to suicide or self-harm from triage notes. In the case of suicide or self-harm related Emergency Department presentations, this classification process is more efficient than manual annotation, more precise than keyword searching, and more comprehensive than classifying based on ICD-10 clinical codes. The NLP programs are customised by the choice of annotated data, demographic, data size and distribution, linguistic analysis techniques and machine learning algorithm. This enables users to create and use NLP programs optimised to their needs. 
 
 Disclaimer: This software package was developed during a proof-of-concept project. The NLP techniques included do not claim to be cutting edge or comprehensive. This software package is useful for experimentation with and exploration of NLP programs but may not be suited to large-scale implementations.
 
@@ -11,11 +9,8 @@ Disclaimer: This software package was developed during a proof-of-concept projec
 The directories (D) and packages (P) within this repository are structured as follows:
 
 ```text 
-├── data                (D) # A convenient location to store test data.
-├── gui                 (P) # The Graphical User Interface (GUI).
-│   └── build           (P) # The component of gui which constructs NLP programs.
-|       └── vectorise   (P) # The component of build which constructs vectorizers. 
-├── model               (P) # Save and demonstration location for NLP programs.                  
+├── data                (D) # A convenient location to store test data. 
+├── model               (P) # Save location for NLP programs.                  
 ├── package             (P) # The backend of the program builder.
 │   ├── Importer        (P) # The component of package which imports data.
 |   |   └──extractors   (P) # The component of package which extracts specified data. 
@@ -27,26 +22,7 @@ The directories (D) and packages (P) within this repository are structured as fo
 
 ## Dependencies
 
-All code is written in Python 3.10.9. The code depends on the following modules:
-
-- abc
-- collections
-- joblib
-- matplotlib
-- nltk
-- numpy
-- openpyxl
-- os
-- pandas
-- PyQt6
-- random
-- scipy
-- sklearn
-- sys
-- time
-- tracemalloc
-- typing
-- unittest
+All code is written in Python 3.13.3. Dependencies can be found in requirements.txt.
 
 Ensure that 'python' is set as a path variable or that the terminal being used is Anaconda PowerShell.
 
@@ -94,37 +70,72 @@ from EpiNLPpb.package.base import NLP
 The NLP class contains all the functionality required to create, evaluate, export, and use an NLP program. To do this, first create an NLP object with the desired customisations.
 ```text
 nlp = NLP(
-    'program name',
-    ['/path/to/data/file1', '/path/to/data/file2'],
-    'FILETYPE',
-    'date column label',
-    'hospital column label',
-    'sex column label',
-    'age column label',
-    ['text field 1 column label', 'text field 2 column label'],
-    'flag column label',
-    15,     #minimum age
-    60,     #maximum age
-    'CHHS', #hospital
-    'MALE', #sex
-    2017,   #earliest year
-    2021,   #latest year
-    15000,  #amount of training data
-    'TRAIN_DIST',
-    2000,   #amount of testing data
-    'TEST_DIST',
-    'tokeniser',
-    ['pre LA change 1', 'pre LA change 2'],
-    ['token level 1'],
-    ['text level 1', 'text level 2', 'text level 3'],
-    'corpus level technique',
-    'ml algorithm type',
-    ['ml alg param 1', 'ml alg param 2'],
-    4.5,    #percentage of positively flagged training records
-    2.1     #percentage of positively flagged testing records
+    name= 'program name',
+    fileLocations= ['/path/to/data/file1', '/path/to/data/file2'],
+    dateColumnLabel= 'date column label',
+    hospitalColumnLabel= 'hospital column label',
+    sexColumnLabel= 'sex column label',
+    ageColumnLabel= 'age column label',
+    textFieldColumnLabels= ['text field 1 column label', 'text field 2 column label'],
+    flagColumnLabel= 'flag column label',
+    ageBounds= (15, 60),     # (minimum age, maximum age)
+    hospital= 'CHHS', #hospital
+    sex= 1, # 0 for persons, 1 for male, 2 for female
+    yearBounds= (2017, 2021),   # (earliest year, latest year)
+    trainSize= 15000,  #amount of training data
+    trainDist= 'TRAIN_DIST',
+    testSize= 2000,   #amount of testing data
+    testDist= 'TEST_DIST',
+    tokeniser= 'tokeniser',
+    preLAChanges= ['pre LA change 1', 'pre LA change 2'],
+    tokenLevelLA= ['token level 1'],
+    textLevelLA= ['text level 1', 'text level 2', 'text level 3'],
+    corpusLevelLA= 'corpus level technique',
+    mlAlgType= 'ml algorithm type',
+    macLearnInput= {
+        'ml alg param 1' : 0.01,
+        'ml alg param 2' : 15
+    }
 )
 ```
-Information about the format of and options for each parameter in the NLP constructor can be found in the EpiNLP Builder Technical Notes. 
+An NLP object can also be created using dictionaries containing constructor arguments for the Importer, Vectorise, and MLearn objects. If an argument dictionary is provided for Importer, Vectorise, or MLearn, the related keyword arguments provided to the NLP constructor will be ignored.
+```
+nlp = NLP(
+    name= 'program name',
+    imp_arg_dict= {
+        'fileLocations' : ['/path/to/data/file1', '/path/to/data/file2'],
+        'dateColumnLabel' : 'date column label',
+        'hospitalColumnLabel' : 'hospital column label',
+        'sexColumnLabel' : 'sex column label',
+        'ageColumnLabel' : 'age column label',
+        'textFieldColumnLabels' : ['text field 1 column label', 'text field 2 column label'],
+        'flagColumnLabel' : 'flag column label',
+        'ageBounds' : (15, 60),
+        'hospital' : 'CHHS',
+        'sex' : 1,
+        'yearBounds' : (2017, 2021),
+        'trainSize' : 15000,
+        'trainDist' : 'TRAIN_DIST',
+        'testSize' : 2000,
+        'testDist' : 'TEST_DIST'
+    },
+    vect_arg_dict= {
+        'tokeniser' : 'tokeniser',
+        'preLAChanges' : ['pre LA change 1', 'pre LA change 2'],
+        'tokenLevelLA' : ['token level 1'],
+        'textLevelLA' : ['text level 1', 'text level 2', 'text level 3'],
+        'corpusLevelLA' : 'corpus level technique',
+    },
+    ml_arg_dict= {
+        'mlAlgType' : 'ml algorithm type',
+        'macLearnInput' : {
+            'ml alg param 1' : 0.01,
+            'ml alg param 2' : 15
+        }
+    }
+)
+```
+Information about the format of and options for each parameter in the NLP constructor can be found in the EpiNLP Builder Technical Notes and the Release Notes for Update 1.1.0.
 
 Use the create method to build an NLP program with these desired customisations.
 ```text
@@ -156,13 +167,16 @@ nlp.annotateDataXLSX(
     'label for annotation column'
 )
 ```
-For more information about using the software package please consult the package documentation.
 
-This project can also be used through a GUI. To launch the GUI, open a terminal in the directory containing this repository and run:
-```text
-python -m EpiNLPpb.gui.gui
+NLP programs can also be trained and evaluated in a cross-validate fashion using crossValidate.
 ```
-As of Version 1.0, the GUI is not yet complete and will be finalised in a subsequent release.
+scores = nlp.crossValidate(
+    5 # number of folds to use during cross-validation
+)
+print(scores)
+```
+
+For more information about using the software package please consult the package documentation.
 
 ## Tests
 
@@ -181,8 +195,7 @@ epicentre@act.gov.au
 
 This software uses the following open source packages:
 - NLTK
-- Sci-Kit Learn 
-- PyQt6
+- Sci-Kit Learn
 
 This project was written by George McNamara.
 

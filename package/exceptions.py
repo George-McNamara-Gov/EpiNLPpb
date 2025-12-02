@@ -3,7 +3,6 @@ Creates custom exceptions to be used throughout package.
 
 Classes:
 
-    InsufficientMeasureListException
     EmptyActualFlagsException
     EmptyPredictedFlagsException
     FlagsNotEqualException
@@ -12,44 +11,43 @@ Classes:
     TimesSpacesNotEqualException
     MoreDataThanRecordsException
     UnsupportedFileTypeException
-    MinAgeException
-    MaxAgeException
-    HospitalException
-    SexException
-    MinYearException
-    MaxYearException
-    MinMaxYearException
     TrainDistException
     TestDistException
-    TrainPosPercentException
-    TestPosPercentException
     MLAlgTypeException
     ImpurityException
     KernelException
-    NoRBFGammaException
-    NegRBFGammaException
-    NoPolynomialParameterException
-    NegPolynomialDegreeException
-    NoSigmoidParameterException
-    NegSigmoidGammaException
     EmptyFlagsVectorsException
     TrainVectorsFlagsNotEqualException
     VectorsNotEqualException
-    NoLATechniquesException
-    NoTokeniserException
     TokeniserException
     PreLAException
     TokenLevelException
     TextLevelException
     CorpusLevelException
+    NGramException
     NegTrainSizeException
     NegTestSizeException
-    NoTextFieldsException
-    NoFlagFieldException
-    ColumnLabelException
     NameExistsException
     NotEnoughClassesException
-    TreeGraphException
+    MacLearnInputException
+    OverSampleOpsException
+    UnderSampleOpsException
+    GammaException
+    PolynomialException
+    SigmoidException
+    ImporterException
+    VectoriseException
+    MLearnException
+    FileException
+    ColumnLabelException
+    BoundsException
+    RatioException
+    NEstimatorsException
+    LearningRateException
+    MaxDepthException
+    MinSamplesException
+    CArgException
+    CrossValidateException
 
 Functions:
 
@@ -63,13 +61,6 @@ Exceptions:
 
     None
 '''
-
-class InsufficientMeasureListException(Exception):
-    '''
-    Raised when measureList does not provide enough records to approximate 
-    complexity.
-    '''
-    pass
 
 class EmptyActualFlagsException(Exception):
     '''
@@ -119,48 +110,6 @@ class UnsupportedFileTypeException(Exception):
     '''
     pass
 
-class MinAgeException(Exception):
-    '''
-    Raised when minAge is less than 0.
-    '''
-    pass
-
-class MaxAgeException(Exception):
-    '''
-    Raised when maxAge is less than minAge.
-    '''
-    pass
-
-class HospitalException(Exception):
-    '''
-    Raised when the hospital input is invalid.
-    '''
-    pass
-
-class SexException(Exception):
-    '''
-    Raised when the sex input is invalid.
-    '''
-    pass
-
-class MinYearException(Exception):
-    '''
-    Raised when minYear is out of range.
-    '''
-    pass
-
-class MaxYearException(Exception):
-    '''
-    Raised when maxYear is out of range.
-    '''
-    pass
-
-class MinMaxYearException(Exception):
-    '''
-    Raised when maxYear is less than minYear.
-    '''
-    pass
-
 class TrainDistException(Exception):
     '''
     Raised when the input training distribution is invalid.
@@ -170,20 +119,6 @@ class TrainDistException(Exception):
 class TestDistException(Exception):
     '''
     Raised when the input testing distribution is invalid.
-    '''
-    pass
-
-class TrainPosPercentException(Exception):
-    '''
-    Raised when the percentage of positively flagged training records is less
-    than or equal to 0 or greater than or equal to 100.
-    '''
-    pass
-
-class TestPosPercentException(Exception):
-    '''
-    Raised when the percentage of positively flagged testing records is less
-    than or equal to 0 or greater than or equal to 100.
     '''
     pass
 
@@ -205,48 +140,6 @@ class KernelException(Exception):
     '''
     pass
 
-class NoRBFGammaException(Exception):
-    '''
-    Raised when no gamma parameter is provided in macLearnInput for an RBF
-    kernel.
-    '''
-    pass
-
-class NegRBFGammaException(Exception):
-    '''
-    Raised when the gamma parameter provided in macLearnInput for an RBF
-    kernel is non-positive.
-    '''
-    pass
-
-class NoPolynomialParameterException(Exception):
-    '''
-    Raised when no degree or r parameter is provided in macLearnInput for a
-    polynomial kernel.
-    '''
-    pass
-
-class NegPolynomialDegreeException(Exception):
-    '''
-    Raised when the degree parameter provided in macLearnInput for a polynomial
-    kernel is non-positive.
-    '''
-    pass
-
-class NoSigmoidParameterException(Exception):
-    '''
-    Raised when no gamma or r parameter is provided in macLearnInput for a
-    sigmoid kernel.
-    '''
-    pass
-
-class NegSigmoidGammaException(Exception):
-    '''
-    Raised when the gamma parameter provided in macLearnInput for a sigmoid
-    kernel is non-positive.
-    '''
-    pass
-
 class EmptyFlagsVectorsException(Exception):
     '''
     Raised when trainVectors, trainFlags or testVectors are empty.
@@ -262,18 +155,6 @@ class TrainVectorsFlagsNotEqualException(Exception):
 class VectorsNotEqualException(Exception):
     '''
     Raised when the lengths of testing and training vectors are not equal.
-    '''
-    pass
-
-class NoLATechniquesException(Exception):
-    '''
-    Raised when no token, text or corpus level LA techniques are provided.
-    '''
-    pass
-
-class NoTokeniserException(Exception):
-    '''
-    Raised when token level techniques are provided with no tokeniser.
     '''
     pass
 
@@ -307,6 +188,11 @@ class CorpusLevelException(Exception):
     '''
     pass
 
+class NGramException(Exception):
+    '''
+    Raised when the input ngramRange is invalid.
+    '''
+
 class NegTrainSizeException(Exception):
     '''
     Raised when train size is less than 0.
@@ -316,24 +202,6 @@ class NegTrainSizeException(Exception):
 class NegTestSizeException(Exception):
     '''
     Raised when test size is less than 0.
-    '''
-    pass
-
-class NoTextFieldsException(Exception):
-    '''
-    Raised when no text field column labels are provided.
-    '''
-    pass
-
-class NoFlagFieldException(Exception):
-    '''
-    Raised when no flag column label is provided.
-    '''
-    pass
-
-class ColumnLabelException(Exception):
-    '''
-    Raised when one of the column labels cannot be found in the data file.
     '''
     pass
 
@@ -351,8 +219,116 @@ class NotEnoughClassesException(Exception):
     '''
     pass
 
-class TreeGraphException(Exception):
+class MacLearnInputException(Exception):
     '''
-    Raised when trying to plot a tree graph for a SVM algorithm.
+    Raised when the input macLearnInput is invalid.
+    '''
+    pass
+
+class OverSampleOpsException(Exception):
+    '''
+    Raised when the input overSampleOps is invalid.
+    '''
+    pass
+
+class UnderSampleOpsException(Exception):
+    '''
+    Raised when the input underSampleOps is invalid.
+    '''
+    pass
+
+class GammaException(Exception):
+    '''
+    Raised when the macLearnInput gamma is invalid.
+    '''
+    pass
+
+class PolynomialException(Exception):
+    '''
+    Raised when the polynomial parameters are invalid.
+    '''
+    pass
+
+class SigmoidException(Exception):
+    '''
+    Raised when the sigmoid parameters are invalid.
+    '''
+    pass
+
+class ImporterException(Exception):
+    '''
+    Raised when Importer input is invalid.
+    '''
+    pass
+
+class VectoriseException(Exception):
+    '''
+    Raised when Vectorise input is invalid.
+    '''
+    pass
+
+class MLearnException(Exception):
+    '''
+    Raised when MLearn input is invalid.
+    '''
+    pass
+
+class FileException(Exception):
+    '''
+    Raised when a file input is invalid.
+    '''
+    pass
+
+class ColumnLabelException(Exception):
+    '''
+    Raised when a columnLabel input is invalid.
+    '''
+    pass
+
+class BoundsException(Exception):
+    '''
+    Raised when demographic bounds inputs are invalid.
+    '''
+    pass
+
+class RatioException(Exception):
+    '''
+    Raised when macLearnInput ratio input is invalid.
+    '''
+    pass
+
+class NEstimatorsException(Exception):
+    '''
+    Raised when macLearnInput n_estimators input is invalid.
+    '''
+    pass
+
+class LearningRateException(Exception):
+    '''
+    Raised when macLearnInput learning_rate input is invalid.
+    '''
+    pass
+
+class MaxDepthException(Exception):
+    '''
+    Raised when macLearnInput max_depth input is invalid.
+    '''
+    pass
+
+class MinSamplesException(Exception):
+    '''
+    Raised when macLearnInput min_samples_split input is invalid.
+    '''
+    pass
+
+class CArgException(Exception):
+    '''
+    Raised when macLearnInput C input is invalid.
+    '''
+    pass
+
+class CrossValidateException(Exception):
+    '''
+    Raised when nFolds input to crossValidate function is invalid.
     '''
     pass

@@ -1,5 +1,6 @@
 '''
-Constants to support package/vectorise/vectorise.py and 
+Constants to support package/vectorise/vectorise.py,
+package/vectorise/nltkvectorise.py and 
 package/vectorise/base.py.
 
 Classes:
@@ -13,15 +14,15 @@ Functions:
 Misc variables:
 
     TOEKNISER_NAMES : list
-        A list of names of available tokenisers.
+        A list of the names of available tokenisers.
     PRE_LA_CHANGES : list
         A list of the names of available pre-LA changes.
-    TOKEN_LEVEL : list(str)
+    TOKEN_LEVEL : list
         A list of the names of available token level LA techniques.
     TEXT_LEVEL : list
         A list of the names of available text level LA techniques.
     CORPUS_LEVEL : list
-        A list of the names of available text level LA techniques.
+        A list of the names of available corpus level LA techniques.
     MAX_CHARS : int
         The maximum number of characters in a text field.
     MAX_TOKENS : int
@@ -32,12 +33,6 @@ Misc variables:
         A set of stopwords.
     STEMMER : SnowballStemmer
         An NLTK stemmer.
-    COUNTV : CountVectorizer
-        An NLTK CountVectorizer to be used for the bag of words approach.
-    FREQV : TfidfVectorizer
-        An NLTK TfidfVectorizer to be used for the bag of words approach.
-    HASHV : HashingVectorizer
-        An NLTK HashingVectorizer to be used for the bag of words approach.
     UNIVERSAL_TAGS : dict
         A dictionary indexing the possible POS tags.
 
@@ -47,9 +42,6 @@ Exceptions:
 '''
 from nltk.corpus import stopwords
 from nltk.stem.snowball import SnowballStemmer
-from sklearn.feature_extraction.text import CountVectorizer
-from sklearn.feature_extraction.text import TfidfVectorizer
-from sklearn.feature_extraction.text import HashingVectorizer
 
 TOKENISER_NAMES = ['',
                    'WORD_TOKENISER',
@@ -62,9 +54,7 @@ CORPUS_LEVEL = ['',
                 'BAG_OF_WORDS_C', 
                 'MOD_BAG_OF_WORDS_C', 
                 'BAG_OF_WORDS_F', 
-                'MOD_BAG_OF_WORDS_F',
-                'BAG_OF_WORDS_H',
-                'MOD_BAG_OF_WORDS_H']
+                'MOD_BAG_OF_WORDS_F']
 
 MAX_CHARS = 1571
 MAX_TOKENS = 225
@@ -77,9 +67,6 @@ KEYWORDS = [['suic'], ['self harm'], ['self-harm'], ['selfharm'],
 
 STOPWORDS = set(stopwords.words('english'))
 STEMMER = SnowballStemmer('english')
-COUNTV = CountVectorizer(ngram_range=(1,3))
-FREQV = TfidfVectorizer(ngram_range=(1,3))
-HASHV = HashingVectorizer(ngram_range=(1,3))
 UNIVERSAL_TAGS = dict(CC = 0,
                       CD = 1,
                       DT = 2,

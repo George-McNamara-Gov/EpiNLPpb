@@ -1,5 +1,5 @@
 '''
-Main module of the package/Importer package to be used in package/base.
+Main module of the package/Importer package to be used in package/base.py.
 
 Classes:
 
@@ -7,7 +7,8 @@ Classes:
 
 Functions:
 
-    splitPosAndNegFlags(list) -> tuple[list,list]
+    startRec() -> float
+    stopRec(float) -> (float, float)
 
 Misc variables:
 
@@ -15,73 +16,100 @@ Misc variables:
 
 Exceptions:
 
+    ImporterException
     NegTrainSizeException
     NegTestSizeException
     TrainDistException
     TestDistException
-    TrainPosPercentException
-    TestPosPercentException
 '''
 from . import base as b
 from .extractors import extractors as ex
-from .. import base
-from collections import deque
 from .. import exceptions as e
+import time
+import tracemalloc
+import pandas as pd
 
 class Importer:
     '''
-    A class to be constructed in package/base to import the necessary data.
+    A class to be constructed in package/base.py to import the necessary data.
 
     ...
 
     Attributes
     ----------
-    demographic : Demographic
-        Demographic of the desired data.
+    Constructed by running the initialise() method:
     dataSet : DataSet
         The DataSet from which to draw the data.
+    demographic : Demographic
+        Demographic of the desired data.
     trainExtractor : Extractor
         An Extractor to obtain training data.
     testExtractor : Extractor
         An Extractor to obtain testing data.
-    trainPosPercent : float
-        The percentage of positively flagged training records to use.
-    testPosPercent : float
-        The percentage of positively flagged testing records to use.
+    textFieldColumnLabels : list
+        The labels of the columns with free text.
+    flagColumnLabel : str
+        The label of the column with the classification flag.
+
+    Constructed by running the importData() method:
+    importTime : float
+        Time taken to import data.
+    importSpace : float
+        Peak space used to import data.
+    filterTime : float
+        Time taken to filter data.
+    filterSpace : float
+        Peak space used to filter data.
+    trainExtractTime : float
+        Time taken to extract training data.
+    trainExtractSpace : float
+        Peak space used to extract training data.
+    testExtractTime : float
+        Time taken to extract testing data.
+    testExtractSpace : float
+        Peak space used to extract testing data.
     
     Methods
     -------
-    importData() -> tuple[list, list]
-        Creates a list of training records and a list of testing records.
+    initialise()
+        Checks constructor inputs and creates attributes.
+    importData() -> tuple[pd.DataFrame, pd.DataFrame]
+        Creates a data frame of training records and a data frame of testing records.
     '''
-    def __init__(self, 
-                 fileLocations: list, 
-                 fileType : str, 
-                 dateColumnLabel : str,
-                 hospitalColumnLabel : str,
-                 sexColumnLabel : str,
-                 ageColumnLabel : str,
-                 textFieldColumnLables : list,
-                 flagColumnLabel : str, 
-                 minAge: int, 
-                 maxAge: int, 
-                 hospital: str, 
-                 sex: str, 
-                 minYear: int, 
-                 maxYear: int, 
-                 trainSize: int, 
-                 trainDist: str, 
-                 testSize: int, 
-                 testDist: str, 
-                 trainPosPercent = -1,
-                 testPosPercent = -1):
+    def __init__(self,
+                 arg_dict : dict = None,
+                 trainFile : str = '',
+                 testFile : str = '', 
+                 fileLocations: list = [], 
+                 dateColumnLabel : str = '',
+                 hospitalColumnLabel : str = '',
+                 sexColumnLabel : str = '',
+                 ageColumnLabel : str = '',
+                 customColumnLabels : list = [],
+                 textFieldColumnLabels : list = [],
+                 flagColumnLabel : str = '', 
+                 ageBounds : tuple = (0, 150), 
+                 hospital: str = 'ALL', 
+                 sex: int = 0, 
+                 yearBounds : tuple = (1900, 2100),
+                 customBounds : list = [], 
+                 trainSize: int = 0, 
+                 trainDist: str = 'NEWESTBLOCK', 
+                 testSize: int = 0, 
+                 testDist: str = 'NEWESTBLOCK'):
         '''
-        Checks inputs are valid and constructs attributes for Importer object.
+        Passes inputs from either arg_dict or keyword arguments.
 
         Parameters
         ----------
+        arg_dict : dict
+            A dictionary containing constructor arguments.
+        trainFile : str
+            The path to a file containing training data.
+        testFile : str
+            The path to a file containing testing data.
         fileLocations : list
-            List of strings of file names where the data is stored.
+            List of paths of files where data is stored.
         dateColumnLabel : str
             The label of the column with the date data.
         hospitalColumnLabel : str
@@ -90,22 +118,22 @@ class Importer:
             The label of the column with the sex data.
         ageColumnLabel : str
             The label of the column with the age data.
+        customColumnLabels : list
+            The labels of columns with custom data to filter.
         textFieldColumnLabels : list
             The labels of the columns with free text.
         flagColumnLabel : str
-            The label of the column with the data flag.
-        minAge : int
-            Lowest age.
-        maxAge : int
-            Highest age.
+            The label of the column with the classification flag.
+        ageBounds : tuple
+            The minimum and maximum age values for included records.
         hospital : str
             Which hospital(s) to include.
-        sex : str
+        sex : int
             Which sex(es) to include.
-        minYear : int
-            Earliest year.
-        maxYear : int
-            Latest year.
+        yearBounds : tuple
+            The minimum and maximum year values for included records.
+        customBounds : list
+            A list of bounds for columns with custom data.
         trainSize : int
             Number of records to use for training.
         trainDist : str
@@ -114,43 +142,172 @@ class Importer:
             Number of records to use for testing.
         testDistribution : str
             How to sample the testing data from the dataSet.
-        trainPosPercent : float
-            The percentage of positively flagged records in the training data.
-        testPosPercent : float
-            The percentage of positively flagged records in the testing data.
         '''
-        self.dataSet = b.DataSet(fileLocations, 
-                                fileType, 
+        if arg_dict is not None:
+            if not isinstance(arg_dict, dict):
+                raise e.ImporterException(
+                    'arg_dict must be a dictionary.'
+                )
+            
+            if 'tranFile' in arg_dict:
+                trainFile = arg_dict['trainFile']
+            if 'testFile' in arg_dict:
+                testFile = arg_dict['testFile']
+            if 'fileLocations' in arg_dict:
+                fileLocations = arg_dict['fileLocations']
+            if 'dateColumnLabel' in arg_dict:
+                dateColumnLabel = arg_dict['dateColumnLabel']
+            if 'hospitalColumnLabel' in arg_dict:
+                hospitalColumnLabel = arg_dict['hospitalColumnLabel']
+            if 'sexColumnLabel' in arg_dict:
+                sexColumnLabel = arg_dict['sexColumnLabel']
+            if 'ageColumnLabel' in arg_dict:
+                ageColumnLabel = arg_dict['ageColumnLabel']
+            if 'customColumnLables' in arg_dict:
+                customColumnLabels = arg_dict['customColumnLabels']
+            if 'textFieldColumnLabels' in arg_dict:
+                textFieldColumnLabels = arg_dict['textFieldColumnLabels']
+            if 'flagColumnLabel' in arg_dict:
+                flagColumnLabel = arg_dict['flagColumnLabel']
+            if 'ageBounds' in arg_dict:
+                ageBounds = arg_dict['ageBounds']
+            if 'hospital' in arg_dict:
+                hospital = arg_dict['hospital']
+            if 'sex' in arg_dict:
+                sex = arg_dict['sex']
+            if 'yearBounds' in arg_dict:
+                yearBounds = arg_dict['yearBounds']
+            if 'customBounds' in arg_dict:
+                customBounds = arg_dict['customBounds']
+            if 'trainSize' in arg_dict:
+                trainSize = arg_dict['trainSize']
+            if 'trainDist' in arg_dict:
+                trainDist = arg_dict['trainDist']
+            if 'testSize' in arg_dict:
+                testSize = arg_dict['testSize']
+            if 'testDist' in arg_dict:
+                testDist = arg_dict['testDist']
+
+        self.initialise(trainFile,
+                        testFile, 
+                        fileLocations, 
+                        dateColumnLabel,
+                        hospitalColumnLabel,
+                        sexColumnLabel,
+                        ageColumnLabel,
+                        customColumnLabels,
+                        textFieldColumnLabels,
+                        flagColumnLabel, 
+                        ageBounds, 
+                        hospital, 
+                        sex, 
+                        yearBounds,
+                        customBounds, 
+                        trainSize, 
+                        trainDist, 
+                        testSize, 
+                        testDist)
+
+    def initialise(self,
+                trainFile : str = '',
+                testFile : str = '', 
+                fileLocations: list = [], 
+                dateColumnLabel : str = '',
+                hospitalColumnLabel : str = '',
+                sexColumnLabel : str = '',
+                ageColumnLabel : str = '',
+                customColumnLabels : list = [],
+                textFieldColumnLabels : list = [],
+                flagColumnLabel : str = '', 
+                ageBounds : tuple = (0, 150), 
+                hospital: str = 'ALL', 
+                sex: int = 0, 
+                yearBounds : tuple = (1900, 2100),
+                customBounds : list = [], 
+                trainSize: int = 0, 
+                trainDist: str = 'NEWESTBLOCK', 
+                testSize: int = 0, 
+                testDist: str = 'NEWESTBLOCK'):
+        '''
+        Checks constructor inputs and creates attributes.
+
+        Parameters
+        ----------
+        trainFile : str
+            The path to a file containing training data.
+        testFile : str
+            The path to a file containing testing data.
+        fileLocations : list
+            List of paths of files where the data is stored.
+        dateColumnLabel : str
+            The label of the column with the date data.
+        hospitalColumnLabel : str
+            The label of the column with the hospital data.
+        sexColumnLabel : str
+            The label of the column with the sex data.
+        ageColumnLabel : str
+            The label of the column with the age data.
+        customColumnLabels : list
+            The labels of columns with custom data to filter.
+        textFieldColumnLabels : list
+            The labels of the columns with free text.
+        flagColumnLabel : str
+            The label of the column with the classification flag.
+        ageBounds : tuple
+            The minimum and maximum age values for included records.
+        hospital : str
+            Which hospital(s) to include.
+        sex : int
+            Which sex(es) to include.
+        yearBounds : tuple
+            The minimum and maximum year values for included records.
+        customBounds : list
+            A list of bounds for columns with custom data.
+        trainSize : int
+            Number of records to use for training.
+        trainDist : str
+            How to sample the training data from the dataSet.
+        testSize : int
+            Number of records to use for testing.
+        testDistribution : str
+            How to sample the testing data from the dataSet.
+
+        Returns
+        -------
+        None
+        '''
+        self.dataSet = b.DataSet(trainFile,
+                                testFile,
+                                fileLocations,
                                 dateColumnLabel,
                                 hospitalColumnLabel,
                                 sexColumnLabel,
                                 ageColumnLabel,
-                                textFieldColumnLables,
+                                customColumnLabels,
+                                textFieldColumnLabels,
                                 flagColumnLabel
                                 )
-        self.demographic = b.Demographic(minAge, 
-                                        maxAge,
-                                        self.dataSet.ageIndex, 
+        
+        self.demographic = b.Demographic(dateColumnLabel,
+                                        hospitalColumnLabel,
+                                        sexColumnLabel,
+                                        ageColumnLabel,
+                                        customColumnLabels,
+                                        ageBounds,
                                         hospital,
-                                        self.dataSet.hospIndex,
                                         sex,
-                                        self.dataSet.sexIndex,
-                                        minYear, 
-                                        maxYear,
-                                        self.dataSet.dateIndex)
-        if trainSize < 0:
+                                        yearBounds,
+                                        customBounds)
+        
+        if trainSize <= 0 or not isinstance(trainSize, int):
             raise e.NegTrainSizeException(
                 'Train size must be a positive integer'
                 )
-        if testSize < 0:
+        if testSize <= 0 or not isinstance(testSize, int):
             raise e.NegTestSizeException(
                 'Test size must be a positive integer'
                 )
-        if trainDist not in ['NEWESTBLOCK', 'RANDOMBLOCK', 'UNIFORM']:
-            raise e.TrainDistException(
-                ('Training distribution must be "NEWESTBLOCK", "RANDOMBLOCK" '
-                'or "UNIFORM"')
-                )
+       
         match trainDist:
             case 'NEWESTBLOCK':
                 self.trainExtractor = ex.NewestBlock(trainSize)
@@ -158,11 +315,12 @@ class Importer:
                 self.trainExtractor = ex.RandomBlock(trainSize)
             case 'UNIFORM':
                 self.trainExtractor = ex.Uniform(trainSize)
-        if testDist not in ['NEWESTBLOCK', 'RANDOMBLOCK', 'UNIFORM']:
-            raise e.TestDistException(
-                ('Testing distribution must be "NEWESTBLOCK", "RANDOMBLOCK" or '
-                '"UNIFORM"')
-                )
+            case _ :
+                raise e.TrainDistException(
+                    ('Training distribution must be "NEWESTBLOCK", "RANDOMBLOCK" '
+                    'or "UNIFORM"')
+                    )
+
         match testDist:
             case 'NEWESTBLOCK':
                 self.testExtractor = ex.NewestBlock(testSize)
@@ -170,24 +328,18 @@ class Importer:
                 self.testExtractor = ex.RandomBlock(testSize)
             case 'UNIFORM':
                 self.testExtractor = ex.Uniform(testSize)
-        if trainPosPercent != -1:
-            if trainPosPercent <= 0 or trainPosPercent >= 100:
-                raise e.TrainPosPercentException(
-                    'The percentage of positively flagged records '
-                    'in the training data must be between 0 and 100'
+            case _:
+                raise e.TestDistException(
+                    ('Testing distribution must be "NEWESTBLOCK", "RANDOMBLOCK" or '
+                    '"UNIFORM"')
                     )
-        self.trainPosPercent = trainPosPercent
-        if testPosPercent != -1:
-            if testPosPercent <= 0 or testPosPercent >= 100:
-                raise e.TestPosPercentException(
-                    'The percentage of positively flagged records '
-                    'in the testing data must be between 0 and 100'
-                    )
-        self.testPosPercent = testPosPercent
+            
+        self.textFieldColumnLabels = textFieldColumnLabels    
+        self.flagColumnLabel = flagColumnLabel
 
-    def importData(self) -> tuple[list, list]:
+    def importData(self) -> tuple[pd.DataFrame, pd.DataFrame]:
         '''
-        Creates a list of training records and a list of testing records.
+        Creates a data frame of training records and a data frame of testing records.
 
         Parameters
         ----------
@@ -195,88 +347,83 @@ class Importer:
 
         Returns
         -------
-        trainData : list
-            A list of training records.
-        testData : list
-            A list of testing records.
+        trainData : pd.DataFrame
+            A data frame of training records.
+        testData : pd.DataFrame
+            A data frame of testing records.
         '''
         print('Importing data...')
-        time0 = base.startRec()
-        data = self.dataSet.importToList()
-        self.importTime, self.importSpace = base.stopRec(time0)
+        time0 = startRec()
+        data = self.dataSet.importToFrame()
+        self.importTime, self.importSpace = stopRec(time0)
 
         print('Filtering data...')
-        time0 = base.startRec()
-        data = [
-            rec for rec in data if self.demographic.demographicCheck(rec)]
-        self.filterTime, self.filterSpace = base.stopRec(time0)
+        time0 = startRec()
+        if isinstance(data, tuple):
+            data = (self.demographic.filter(data[0]), self.demographic.filter(data[1]))
+        else:
+            data = self.demographic.filter(data)
+        self.filterTime, self.filterSpace = stopRec(time0)
+        
+        if isinstance(data, tuple):
+            print('Extracting training data...')
+            time0 = startRec()
+            trainData = self.trainExtractor.extract(data[0])[0]
+            self.trainExtractTime, self.trainExtractSpace = stopRec(time0)
 
-        print('Extracting training data...')
-        time0 = base.startRec()
-        if self.trainPosPercent == -1:
+            print('Extracting testing data...')
+            time0 = startRec()
+            testData = self.testExtractor.extract(data[1])[0]
+            self.testExtractTime, self.testExtractSpace = stopRec(time0)
+        else:
+            print('Extracting training data...')
+            time0 = startRec()
             extracted = self.trainExtractor.extract(data)
             trainData = extracted[0]
             remainingData = extracted[1]
-        else:
-            extracted = self.trainExtractor.extract(data)
-            remainingData = extracted[1]
+            self.trainExtractTime, self.trainExtractSpace = stopRec(time0)
 
-            posList, negList = splitPosAndNegFlags(data)
-            amount = self.trainExtractor.amount
-            newAmount = int(amount * (self.trainPosPercent/100))
-            self.trainExtractor.changeAmount(newAmount)
-            posRecs = self.trainExtractor.extract(posList)
-            newAmount = amount - newAmount
-            self.trainExtractor.changeAmount(newAmount)
-            negRecs = self.trainExtractor.extract(negList)
-            trainData = posRecs[0] + negRecs[0]
-
-        self.trainExtractTime, self.trainExtractSpace = base.stopRec(time0)
-
-        print('Extracting testing data...')
-        time0 = base.startRec()
-        if self.testPosPercent == -1:
+            print('Extracting testing data...')
+            time0 = startRec()
             testData = self.testExtractor.extract(remainingData)[0]
-        else:
-            posList, negList = splitPosAndNegFlags(remainingData)
-            amount = self.testExtractor.amount
-            newAmount = int(amount * (self.testPosPercent/100))
-            self.testExtractor.changeAmount(newAmount)
-            posRecs = self.testExtractor.extract(posList)
-            newAmount = amount - newAmount
-            self.testExtractor.changeAmount(newAmount)
-            negRecs = self.testExtractor.extract(negList)
-            testData = posRecs[0] + negRecs[0]
-        self.testExtractTime, self.testExtractSpace = base.stopRec(time0)
-
+            self.testExtractTime, self.testExtractSpace = stopRec(time0)
+    
         return (trainData, testData)
     
-def splitPosAndNegFlags(data : list) -> tuple[list,list]:
+def startRec() -> float:
     '''
-    Splits a list of records into a list of positively flagged records and a 
-    list of negatively flagged records.
+    Outputs the current time and begins tracking memory.
 
     Parameters
     ----------
-    data : list
-        The list of records to be split.
+    None
+
+    Retruns
+    -------
+    time0 : float
+        The current time.
+    '''
+    time0 = time.time()
+    tracemalloc.start()
+    return time0
+
+def stopRec(time0 : float) -> tuple[float, float]:
+    '''
+    Outputs time passed and peak memory used since the last call of startRec().
+
+    Parameters
+    ----------
+    time0 : float
+        The output from the last call of startRec().
 
     Returns
     -------
-    posList : list
-        The list of positively flagged records.
-    negList : list
-        The list of negatively flagged records.
+    time1 : float
+        The time passed since the last call of startRec().
+    space : float
+        The peak memory used since the last call of startRec().
     '''
-    positive = deque([])
-    negative = deque([])
-    index = 0
-    while index < len(data):
-        if data[index][len(data[index]) - 1] == 1:
-            positive.append(data[index])
-        else:
-            negative.append(data[index])
-        index += 1
-    posList = list(positive)
-    negList = list(negative)
-    return (posList, negList)
+    time1 = time.time() - time0
+    _, space = tracemalloc.get_traced_memory()
+    tracemalloc.stop()
+    return (time1, space)

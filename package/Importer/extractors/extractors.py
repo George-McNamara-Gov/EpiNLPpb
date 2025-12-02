@@ -12,7 +12,6 @@ Classes:
 Functions:
 
     indexSet(int, function) -> str
-    splitter(list) -> tuple[list, list]
 
 Misc variables:
 
@@ -24,7 +23,7 @@ Exceptions:
 '''
 import random
 from abc import ABC, abstractmethod
-from collections import deque
+import pandas as pd
 from ... import exceptions as e
 
 class Extractor(ABC):
@@ -36,11 +35,12 @@ class Extractor(ABC):
 
     Attributes
     ---------
-        None
+    amount : int
+        The number of records to extract.
     
     Methods
     -------
-    extractData(list) -> tuple[list, list]
+    extract(pd.DataFrame) -> tuple[pd.DataFrame, pd.DataFrame]
         An abstract method that returns specified data and leftover data.
     changeAmount(int)
         Changes the amount attribute.
@@ -48,25 +48,25 @@ class Extractor(ABC):
 
     @abstractmethod
     def extract(self, 
-                takeFrom: list) -> tuple[list, list]:
+                takeFrom: pd.DataFrame) -> tuple[pd.DataFrame, pd.DataFrame]:
         '''
         An abstract method that returns specified data and leftover data.
 
         Parameters
         ----------
-        takeFrom : list
-            A list of records to extract data from.
+        takeFrom : pd.DataFrame
+            A data frame of records to extract data from.
 
         Returns
         ------
-        specified : list
+        specified : pd.DataFrame
             The desired records from takeFrom.
-        leftover : list
+        leftover : pd.DataFrame
             All records in takeFrom which aren't in the specified data.
         '''
-        specified = []
-        leftover = []
-        return (specified, leftover)
+        specified = None
+        leftover = None
+        return specified, leftover
 
     def changeAmount(self, 
                      newAmount : int):
@@ -98,8 +98,8 @@ class NewestBlock(Extractor):
     
     Methods
     -------
-    extract(list) -> tuple[list, list]
-        Splits the input list into specified data and leftover data.
+    extract(pd.DataFrame) -> tuple[pd.DateFrame, pd.DataFrame]
+        Splits the input data into specified data and leftover data.
     '''
 
     def __init__(self, 
@@ -115,29 +115,30 @@ class NewestBlock(Extractor):
         self.amount = amount
 
     def extract(self, 
-                takeFrom: list) -> tuple[list, list]:
+                takeFrom: pd.DataFrame) -> tuple[pd.DataFrame, pd.DataFrame]:
         '''
-        Splits the input list into specified data and leftover data.
+        Splits the input data into specified data and leftover data.
 
         Parameters
         ----------
-        takeFrom : list
-            List of records to extract data from.
+        takeFrom : pd.DataFrame
+            A data frame of records to extract data from.
         
         Returns
         -------
-        output : tuple[list, list]
-            The desired records (first) and the leftover records (second).
+        specified : pd.DataFrame
+            The desired records from takeFrom.
+        leftover : pd.DataFrame
+            All records in takeFrom which aren't in the specified data.
         '''
         if len(takeFrom) < self.amount:
             raise e.MoreDataThanRecordsException(
                 f'Data size of {self.amount} is greater than the '
                 f'available number of records {len(takeFrom)}.'
                 )
-        inBlock = takeFrom[0:self.amount]
-        outBlock = takeFrom[self.amount: len(takeFrom) - 1]
-        output = (inBlock, outBlock)
-        return output
+        specified = takeFrom.iloc[0:self.amount]
+        leftover = takeFrom.iloc[self.amount: len(takeFrom) - 1]
+        return specified, leftover
 
 class RandomBlock(Extractor):
     '''
@@ -153,8 +154,8 @@ class RandomBlock(Extractor):
     
     Methods
     -------
-    extract(list) -> tuple[list, list]
-        Splits the input list into specified data and leftover data.
+    extract(pd.DataFrame) -> tuple[pd.DataFrame, pd.DataFrame]
+        Splits the input data into specified data and leftover data.
     '''
 
     def __init__(self, 
@@ -170,19 +171,21 @@ class RandomBlock(Extractor):
         self.amount = amount
 
     def extract(self, 
-                takeFrom: list) -> tuple[list, list]:
+                takeFrom: pd.DataFrame) -> tuple[pd.DataFrame, pd.DataFrame]:
         '''
-        Splits the input list into specified data and leftover data.
+        Splits the input data into specified data and leftover data.
 
         Parameters
         ----------
-        takeFrom : list
-            A list of records to extract data from.
+        takeFrom : pd.DataFrame
+            A data frame of records to extract data from.
         
         Returns
         -------
-        output : tuple[list, list]
-            The desired records (first) and the leftover records (second).
+        specified : pd.DataFrame
+            The desired records from takeFrom.
+        leftover : pd.DataFrame
+            All records in takeFrom which aren't in the specified data.
         '''
         if len(takeFrom) < self.amount:
             raise e.MoreDataThanRecordsException(
@@ -191,12 +194,11 @@ class RandomBlock(Extractor):
         
         start = random.randint(0,len(takeFrom) - self.amount - 1)
 
-        inBlock = takeFrom[start: start + self.amount]
-        outBlock = (
-            takeFrom[0: start] + takeFrom[start + self.amount: len(takeFrom) -1]
-        )
-        output = (inBlock, outBlock)
-        return output
+        specified = takeFrom.iloc[start: start + self.amount]
+        outBlock1 = takeFrom.iloc[0: start]
+        outBlock2 = takeFrom.iloc[start + self.amount: len(takeFrom) -1]
+        leftover = pd.concat([outBlock1, outBlock2], axis= 0)
+        return specified, leftover
 
 class Uniform(Extractor):
     '''
@@ -212,8 +214,8 @@ class Uniform(Extractor):
     
     Methods
     -------
-    extract(list) -> tuple[list, list]
-        Splits the input list into specified data and leftover data.
+    extract(pd.DataFrame) -> tuple[pd.DataFrame, pd.DataFrame]
+        Splits the input data into specified data and leftover data.
     '''
 
     def __init__(self, 
@@ -229,33 +231,42 @@ class Uniform(Extractor):
         self.amount = amount
     
     def extract(self, 
-                takeFrom: list) -> tuple[list, list]:
+                takeFrom: pd.DataFrame) -> tuple[pd.DataFrame, pd.DataFrame]:
         '''
-        Splits the input list into specified data and leftover data.
+        Splits the input data into specified data and leftover data.
 
         Parameters
         ----------
-        takeFrom : list
-            A list of records to extract data from.
+        takeFrom : pd.DataFrame
+            A data frame of records to extract data from.
         
         Returns
         -------
-        output : tuple[list, list]
-            The desired records (first) and the leftover records (second).
+        specified : pd.DataFrame
+            The desired records from takeFrom.
+        leftover : pd.DataFrame
+            All records in takeFrom which aren't in the specified data.
         '''
         if len(takeFrom) < self.amount:
             raise e.MoreDataThanRecordsException(
                 'Data size is greater than the available number of records'
                 )
         indexGen = lambda x : random.randint(0,len(takeFrom) - 1)
-        indicies = indexSet(self.amount, indexGen)
-        output = splitter(indicies,takeFrom)
-        return output
+        indices = indexSet(self.amount, indexGen)
+        specified = takeFrom.iloc[list(indices)]
+        remainingIndicies = list(range(0,len(takeFrom) - 1))
+        for ind in indices:
+            try:
+                remainingIndicies.remove(ind)
+            except ValueError:
+                pass
+        leftover = takeFrom.iloc[remainingIndicies]
+        return specified, leftover
         
 def indexSet(size : int, 
              indexGen) -> list:
     '''
-    Produces a list of unique indices to be used in the splitter function.
+    Produces a list of unique indices to be used in the Uniform extractor.
 
     Parameters
     ----------
@@ -274,35 +285,3 @@ def indexSet(size : int,
         index = indexGen(0)
         indicies.add(index)
     return indicies
-
-def splitter(indicies : list, 
-             takeFrom : list) -> tuple[list, list]:
-    '''
-    Splits one list into two based on a set of indicies.
-
-    Parameters
-    ----------
-    takeFrom : list
-        the list to split.
-    indicies : list
-        the list of indicies upon which to base the split.
-
-    Returns
-    -------
-    samp : list
-        The elements of takeFrom whose indicies are in the indicies list.
-    left : list
-        The elements of takeFrom whose indicies are not in the indicies list.
-    ''' 
-    sample = deque([])
-    leftover = deque([])
-    index = 0
-    while index < len(takeFrom):
-        if index in indicies:
-            sample.append(takeFrom[index])
-        else:
-            leftover.append(takeFrom[index])
-        index += 1
-    samp = list(sample)
-    left = list(leftover)
-    return (samp, left)

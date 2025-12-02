@@ -21,12 +21,11 @@ import unittest
 
 from ..package.evaluate import evaluate as e
 from ..package.evaluate import base as b
-from collections import deque
 from ..package import exceptions as ex
 
 class TestEvaluate(unittest.TestCase):
     '''
-    A class of tests to check the operation of the package/importer package.
+    A class of tests to check the operation of the package/evaluate package.
 
     Attributes
     ----------
@@ -52,15 +51,6 @@ class TestEvaluate(unittest.TestCase):
         correct number of entries with the correct keys.
     test_precAndRec()
         Tests that precisionAndRecall function calculates the correct values.
-    test_sample()
-        Tests that the sample function outputs samples of the correct size.
-    test_complexity()
-        Tests that the complexity method calculates the correct value.
-    test_CompAppError()
-        Tests that having insufficiently long measureList input into Complexity
-        Approximator raises an excpetion.
-    test_CompAppSizes()
-        Tests that the correct set of measureSizes is used.
     '''
 
     def test_noError(self):
@@ -154,48 +144,6 @@ class TestEvaluate(unittest.TestCase):
         precision, recall = b.precisionAndRecall(actual, predicted)
         self.assertEqual(precision, 3 / (3 + 1))
         self.assertEqual(recall, 3 / (3 + 2))
-
-    def test_sample(self):
-        self.assertEqual(b.sample(0,deque(range(0,100))),[])
-        self.assertEqual(len(b.sample(10,deque(range(0,100)))),10)
-        self.assertEqual(len(b.sample(50,deque(range(0,100)))),50) 
-        self.assertEqual(len(b.sample(100,deque(range(0,100)))),100)     
-    
-    def test_complexity(self):
-        sizes = [1, 5, 10, 50, 100, 500, 1000, 5000, 10000]
-        func1 = lambda x : 10*x
-        times = [func1(x) for x in sizes]
-        self.assertTrue(0.99 < b.complexity(sizes,times) < 1.01)
-        func1 = lambda x : 8*x*x
-        times = [func1(x) for x in sizes]
-        self.assertTrue(1.99 < b.complexity(sizes,times) < 2.01)
-        func1 = lambda x : 25*x**1.5
-        times = [func1(x) for x in sizes]
-        self.assertTrue(1.49 < b.complexity(sizes,times) < 1.51)
-        func1 = lambda x : 50*x**0.6
-        times = [func1(x) for x in sizes]
-        self.assertTrue(0.59 < b.complexity(sizes,times) < 0.61)
-    
-    def test_CompAppError(self):
-        inputFunc = lambda x : x
-        with self.assertRaises(ex.InsufficientMeasureListException):
-            _ = b.ComplexityApproximator([], inputFunc)
-        with self.assertRaises(ex.InsufficientMeasureListException):
-            _ = b.ComplexityApproximator(list(range(0,199)), inputFunc)
-        _ = b.ComplexityApproximator(list(range(0,200)), inputFunc)
-
-    def test_CompAppSizes(self):
-        func = lambda x : 1
-        with self.assertRaises(ex.InsufficientMeasureListException):
-            cp = b.ComplexityApproximator(list(range(0,100)),func)
-        cp = b.ComplexityApproximator(list(range(0,900)),func)
-        self.assertEqual(cp.measureSizes, [10,20,50,100,200])
-        cp = b.ComplexityApproximator(list(range(0,4900)),func)
-        self.assertEqual(cp.measureSizes, [20,50,100,200,500])
-        cp = b.ComplexityApproximator(list(range(0,9000)),func)
-        self.assertEqual(cp.measureSizes, [100,200,500,1000,2000])
-        cp = b.ComplexityApproximator(list(range(0,40000)),func)
-        self.assertEqual(cp.measureSizes, [200,500,1000,2000,5000])
 
 if __name__ == '__main__':
     unittest.main()

@@ -18,4 +18,4 @@ Exceptions:
 
     None
 '''
-SUPPORTED_FILE_TYPES = ['CSV', 'XLSX']
+SUPPORTED_FILE_TYPES = ['csv', 'xlsx']

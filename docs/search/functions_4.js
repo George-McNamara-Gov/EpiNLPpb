@@ -1,10 +1,7 @@
 var searchData=
 [
-  ['degreeinput_0',['degreeInput',['../class_epi_n_l_ppb_1_1gui_1_1build_1_1mlearn_1_1_m_learn.html#a2fa573375c3ee02cf02821cc42cfb786',1,'EpiNLPpb::gui::build::mlearn::MLearn']]],
-  ['demographiccheck_1',['demographicCheck',['../class_epi_n_l_ppb_1_1package_1_1_importer_1_1base_1_1_demographic.html#a187a38376ab42d230c854659bcccdbdf',1,'EpiNLPpb::package::Importer::base::Demographic']]],
-  ['dframedefault_2',['dFrameDefault',['../class_epi_n_l_ppb_1_1gui_1_1build_1_1filter_1_1_filter.html#ac5c040faed31de25c79995b1736b4042',1,'EpiNLPpb::gui::build::filter::Filter']]],
-  ['displaymaxage_3',['displayMaxAge',['../class_epi_n_l_ppb_1_1gui_1_1build_1_1filter_1_1_filter.html#a3b1a4d4930270e1e86abcbf36c40dfe6',1,'EpiNLPpb::gui::build::filter::Filter']]],
-  ['displaymaxyear_4',['displayMaxYear',['../class_epi_n_l_ppb_1_1gui_1_1build_1_1filter_1_1_filter.html#a6d1c1b5f17aaaca4b1567aa6bf1083c6',1,'EpiNLPpb::gui::build::filter::Filter']]],
-  ['displayminage_5',['displayMinAge',['../class_epi_n_l_ppb_1_1gui_1_1build_1_1filter_1_1_filter.html#ae067d0f5ca44f9ff694a33277e31d584',1,'EpiNLPpb::gui::build::filter::Filter']]],
-  ['displayminyear_6',['displayMinYear',['../class_epi_n_l_ppb_1_1gui_1_1build_1_1filter_1_1_filter.html#a9262d177e6b98b0d9ace041a2e3a1016',1,'EpiNLPpb::gui::build::filter::Filter']]]
+  ['evaluate_0',['evaluate',['../class_epi_n_l_ppb_1_1package_1_1evaluate_1_1evaluate_1_1_evaluate.html#ac50f8d209f7126cb4c16dc7d75c9a091',1,'EpiNLPpb::package::evaluate::evaluate::Evaluate']]],
+  ['evaluatenlp_1',['evaluateNLP',['../class_epi_n_l_ppb_1_1package_1_1base_1_1_n_l_p.html#a9428b3bf9ed179061333abd18f4fc76e',1,'EpiNLPpb::package::base::NLP']]],
+  ['exportnlp_2',['exportNLP',['../class_epi_n_l_ppb_1_1package_1_1base_1_1_n_l_p.html#a355ce04cac47bc210996c522ec3db767',1,'EpiNLPpb::package::base::NLP']]],
+  ['extract_3',['extract',['../class_epi_n_l_ppb_1_1package_1_1_importer_1_1extractors_1_1extractors_1_1_extractor.html#af045a7a2a966e8635ffbff8a2312c03d',1,'EpiNLPpb.package.Importer.extractors.extractors.Extractor.extract()'],['../class_epi_n_l_ppb_1_1package_1_1_importer_1_1extractors_1_1extractors_1_1_newest_block.html#a93f544a57fb5d25cb6fd6ff4ee578a53',1,'EpiNLPpb.package.Importer.extractors.extractors.NewestBlock.extract()'],['../class_epi_n_l_ppb_1_1package_1_1_importer_1_1extractors_1_1extractors_1_1_random_block.html#a0750dc1e98becf68dd6093c2e72d0447',1,'EpiNLPpb.package.Importer.extractors.extractors.RandomBlock.extract()'],['../class_epi_n_l_ppb_1_1package_1_1_importer_1_1extractors_1_1extractors_1_1_uniform.html#a6ef6dfd713e099775cecc5ab13a5ba1d',1,'EpiNLPpb.package.Importer.extractors.extractors.Uniform.extract()']]]
 ];

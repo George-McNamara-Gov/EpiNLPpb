@@ -13,29 +13,25 @@ Functions:
     stopwordRemoval(str) -> str
     stemming(str) -> str
     posTag(list) -> list
-    bagOfWordsC(list,list) -> 
+    bagOfWordsC(list, list, tuple) -> 
         tuple[sparse.csr_matrix, sparse.csr_matrix, CountVectorizer]
-    modBagOfWordsC(list,list) -> 
+    modBagOfWordsC(list, list, tuple) -> 
         tuple[sparse.csr_matrix, sparse.csr_matrix, CountVectorizer]
-    bagOfWordsF(list,list) -> 
+    bagOfWordsF(list, list, tuple) -> 
         tuple[sparse.csr_matrix, sparse.csr_matrix, TfidfVectorizer]
-    modBagOfWordsF(list,list) -> 
+    modBagOfWordsF(list, list, tuple) -> 
         tuple[sparse.csr_matrix, sparse.csr_matrix, TfidfVectorizer]
-    bagOfWordsH(list,list) -> 
-        tuple[sparse.csr_matrix, sparse.csr_matrix, HasingVectorizer]
-    modBagOfWordsH(list,list) -> 
-        tuple[sparse.csr_matrix, sparse.csr_matrix, HashingVectorizer]
-    tagToIndex(tuple[str,str]) -> int
+    tagToIndex(tuple) -> int
     prepareTexts(list) -> list
     removeStop(list) -> list
     stem(list) -> list
     reconstruct(list) -> str
-    bagOfWords(list,list,str,bool,list) -> 
-        tuple[sparse.csr_matrix, sparse.csr_matrix, 
+    bagOfWords(list, list, str, bool, tuple) -> 
+        tuple[sparse.csr_matrix, 
+              sparse.csr_matrix, 
               Union[CountVectorizer, 
-              TfidfVectorizer, 
-              HashingVectorizer]]
-    recordToCorpusText(list, list) -> str
+                    TfidfVectorizer]]
+    recordToCorpusText(list) -> str
 
 Misc variables:
 
@@ -54,7 +50,6 @@ from nltk.tokenize import word_tokenize
 from scipy import sparse
 from sklearn.feature_extraction.text import CountVectorizer
 from sklearn.feature_extraction.text import TfidfVectorizer
-from sklearn.feature_extraction.text import HashingVectorizer
 from typing import Union
 
 def wordTokeniser(text : str) -> list:
@@ -133,7 +128,7 @@ def stemming(text : str) -> str:
     Parameters
     ----------
     text : str
-        The text to be stemmed
+        The text to be stemmed.
 
     Returns
     -------
@@ -166,8 +161,10 @@ def posTag(tokens : list) -> list:
     return vector
 
 def bagOfWordsC(trainRecords : list, 
-                testRecords : list, 
-                textIndices : list) -> tuple[sparse.csr_matrix, sparse.csr_matrix, CountVectorizer]:
+                testRecords : list,
+                ngramRange : tuple) -> tuple[sparse.csr_matrix, 
+                                             sparse.csr_matrix, 
+                                             CountVectorizer]:
     '''
     Applies bag of words pipeline without modification using count vectorising.
 
@@ -177,14 +174,14 @@ def bagOfWordsC(trainRecords : list,
         The training records provided to the bag of words pipeline.
     testRecords : list
         The testing records provided to the bag of words pipeline.
-    textIndices : list
-        List of indices of the text fields to be processed.
+    ngramRange : tuple
+        Lower and upper bound for n-gram sizes (inclusive).
 
     Returns
     -------
-    trainVectors : list
+    trainVectors : sparse.csr_matrix
         The training vectors returned from the bag of words pipeline.
-    testVectors : list
+    testVectors : sparse.csr_matrix
         The testing vectors returned from the bag of words pipeline.
     vectoriser : CountVectoriser
         Vectoriser to convert text to a bag of words vector.
@@ -193,12 +190,14 @@ def bagOfWordsC(trainRecords : list,
                                            testRecords, 
                                            'COUNT', 
                                            False,
-                                           textIndices)
+                                           ngramRange)
     return (trainVecotrs, testVectors, vectoriser)
 
 def modBagOfWordsC(trainRecords : list, 
-                   testRecords : list, 
-                   textIndices : list) -> tuple[sparse.csr_matrix, sparse.csr_matrix, CountVectorizer]:
+                   testRecords : list,
+                   ngramRange : tuple) -> tuple[sparse.csr_matrix, 
+                                                sparse.csr_matrix, 
+                                                CountVectorizer]:
     '''
     Applies bag of words pipeline with modification using count vectorising.
 
@@ -208,14 +207,14 @@ def modBagOfWordsC(trainRecords : list,
         The training records provided to the bag of words pipeline.
     testRecords : list
         The testing records provided to the bag of words pipeline.
-    textIndices : list
-        List of indices of the text fields to be processed.
+    ngramRange : tuple
+        Lower and upper bound for n-gram sizes (inclusive).
 
     Returns
     -------
-    trainVectors : list
+    trainVectors : sparse.csr_matrix
         The training vectors returned from the bag of words pipeline.
-    testVectors : list
+    testVectors : sparse.csr_matrix
         The testing vectors returned from the bag of words pipeline.
     vectoriser : CountVectoriser
         Vectoriser to convert text to a bag of words vector.
@@ -224,12 +223,14 @@ def modBagOfWordsC(trainRecords : list,
                                            testRecords, 
                                            'COUNT', 
                                            True,
-                                           textIndices)
+                                           ngramRange)
     return (trainVecotrs, testVectors, vectoriser)
 
 def bagOfWordsF(trainRecords : list, 
-                testRecords : list, 
-                textIndices : list) -> tuple[sparse.csr_matrix, sparse.csr_matrix, TfidfVectorizer]:
+                testRecords : list,
+                ngramRange : tuple) -> tuple[sparse.csr_matrix, 
+                                             sparse.csr_matrix, 
+                                             TfidfVectorizer]:
     '''
     Applies bag of words pipeline without modification using tfidf vectorising.
 
@@ -239,14 +240,14 @@ def bagOfWordsF(trainRecords : list,
         The training records provided to the bag of words pipeline.
     testRecords : list
         The testing records provided to the bag of words pipeline.
-    textIndices : list
-        List of indices of the text fields to be processed.
+    ngramRange : tuple
+        Lower and upper bound for n-gram sizes (inclusive).
 
     Returns
     -------
-    trainVectors : list
+    trainVectors : sparse.csr_matrix
         The training vectors returned from the bag of words pipeline.
-    testVectors : list
+    testVectors : sparse.csr_matrix
         The testing vectors returned from the bag of words pipeline.
     vectoriser : TfidfVectoriser
         Vectoriser to convert text to a bag of words vector.
@@ -255,12 +256,14 @@ def bagOfWordsF(trainRecords : list,
                                            testRecords, 
                                            'FREQ', 
                                            False,
-                                           textIndices)
+                                           ngramRange)
     return (trainVecotrs, testVectors, vectoriser)
 
 def modBagOfWordsF(trainRecords : list, 
-                   testRecords : list, 
-                   textIndices : list) -> tuple[sparse.csr_matrix, sparse.csr_matrix, TfidfVectorizer]:
+                   testRecords : list,
+                   ngramRange : tuple) -> tuple[sparse.csr_matrix, 
+                                                sparse.csr_matrix, 
+                                                TfidfVectorizer]:
     '''
     Applies bag of words pipeline with modification using tfidf vectorising.
 
@@ -270,14 +273,14 @@ def modBagOfWordsF(trainRecords : list,
         The training records provided to the bag of words pipeline.
     testRecords : list
         The testing records provided to the bag of words pipeline.
-    textIndices : list
-        List of indices of the text fields to be processed.
+    ngramRange : tuple
+        Lower and upper bound for n-gram sizes (inclusive).
 
     Returns
     -------
-    trainVectors : list
+    trainVectors : sparse.csr_matrix
         The training vectors returned from the bag of words pipeline.
-    testVectors : list
+    testVectors : sparse.csr_matrix
         The testing vectors returned from the bag of words pipeline.
     vectoriser : TfidfVectoriser
         Vectoriser to convert text to a bag of words vector.
@@ -286,69 +289,7 @@ def modBagOfWordsF(trainRecords : list,
                                            testRecords, 
                                            'FREQ', 
                                            True,
-                                           textIndices)
-    return (trainVecotrs, testVectors, vectoriser)
-
-def bagOfWordsH(trainRecords : list, 
-                testRecords : list, 
-                textIndices : list) -> tuple[sparse.csr_matrix, sparse.csr_matrix, HashingVectorizer]:
-    '''
-    Applies bag of words pipeline without modification using hash vectorising.
-
-    Parameters
-    ----------
-    trainRecords : list
-        The training records provided to the bag of words pipeline.
-    testRecords : list
-        The testing records provided to the bag of words pipeline.
-    textIndices : list
-        List of indices of the text fields to be processed.
-
-    Returns
-    -------
-    trainVectors : list
-        The training vectors returned from the bag of words pipeline.
-    testVectors : list
-        The testing vectors returned from the bag of words pipeline.
-    vectoriser : HashingVectorizer
-        Vectoriser to convert text to a bag of words vector.
-    '''
-    trainVecotrs, testVectors, vectoriser = bagOfWords(trainRecords, 
-                                           testRecords, 
-                                           'HASH', 
-                                           False,
-                                           textIndices)
-    return (trainVecotrs, testVectors, vectoriser)
-
-def modBagOfWordsH(trainRecords : list, 
-                   testRecords : list, 
-                   textIndices : list) -> tuple[sparse.csr_matrix, sparse.csr_matrix, HashingVectorizer]:
-    '''
-    Applies bag of words pipeline with modification using hash vectorising.
-
-    Parameters
-    ----------
-    trainRecords : list
-        The training records provided to the bag of words pipeline.
-    testRecords : list
-        The testing records provided to the bag of words pipeline.
-    textIndices : list
-        List of indices of the text fields to be processed.
-
-    Returns
-    -------
-    trainVectors : list
-        The training vectors returned from the bag of words pipeline.
-    testVectors : list
-        The testing vectors returned from the bag of words pipeline.
-    vectoriser : HashingVectorizer
-        Vectoriser to convert text to a bag of words vector.
-    '''
-    trainVecotrs, testVectors, vectoriser = bagOfWords(trainRecords, 
-                                           testRecords, 
-                                           'HASH', 
-                                           True,
-                                           textIndices)
+                                           ngramRange)
     return (trainVecotrs, testVectors, vectoriser)
 
 def tagToIndex(tag : tuple[str, str]) -> int:
@@ -357,7 +298,7 @@ def tagToIndex(tag : tuple[str, str]) -> int:
 
     Parameters
     ----------
-    tag : tuple[str, str]
+    tag : tuple
         The (token, POS tag) tuple to be converted.
 
     Returns
@@ -377,12 +318,12 @@ def prepareTexts(texts : list) -> list:
 
     Parameters
     ----------
-    text : str
+    texts : list
         The text to be modified.
 
     Returns
     -------
-    newText : str
+    newText : list
         The modified text.
     '''
     newText = (
@@ -443,11 +384,14 @@ def reconstruct(tokens : list) -> str:
         string += token + ' '
     return string
 
-def bagOfWords(trainRecords : list, 
-               testRecords : list, 
+def bagOfWords(trainRecords : list,
+               testRecords : list,
                vect : str, 
-               mod : bool, 
-               textIndices : list) -> tuple[sparse.csr_matrix, sparse.csr_matrix, Union[CountVectorizer, TfidfVectorizer, HashingVectorizer]]:
+               mod : bool,
+               ngramRange : tuple) -> tuple[sparse.csr_matrix, 
+                                            sparse.csr_matrix, 
+                                            Union[CountVectorizer, 
+                                                  TfidfVectorizer]]:
     '''
     Applies a customised bag of words pipeline to a set of training and testing
     records.
@@ -459,11 +403,11 @@ def bagOfWords(trainRecords : list,
     testRecords : list
         A list of testing records.
     vect : str
-        A choice of vectoriser, either "COUNT", "FREQ" or "HASH".
+        A choice of vectoriser, either "COUNT" or "FREQ".
     mod : bool
         Whether to modifiy the text before the pipeline or not.
-    textIndices : list
-        List of indices of the text fields to be processed.
+    ngramRange : tuple
+        Lower and upper bound for n-gram sizes (inclusive).
 
     Returns
     -------
@@ -471,33 +415,29 @@ def bagOfWords(trainRecords : list,
         The training vectors.
     trainVectors : sparse.csr_matrix
         The testing vectors.
-    vectoriser : Union[CountVectorizer, TfidfVectorizer, HashingVectorizer]
+    vectoriser : Union[CountVectorizer, TfidfVectorizer]
         Vectoriser to convert text to bag of words vector.
     '''
     trainText = [
-        recordToCorpusText(record, textIndices) for record in trainRecords]
+        recordToCorpusText(record) for record in trainRecords]
     testText = [
-        recordToCorpusText(record, textIndices) for record in testRecords]
+        recordToCorpusText(record) for record in testRecords]
     corpus = trainText + testText
     if mod:
         corpus = prepareTexts(corpus)
     if vect == 'COUNT':
-        vectoriser = vc.COUNTV
-        vectorized_corpus = vc.COUNTV.fit_transform(corpus)
+        vectoriser = CountVectorizer(ngram_range= ngramRange)
+        vectorized_corpus = vectoriser.fit_transform(corpus)
     if vect == 'FREQ':
-        vectoriser = vc.FREQV
-        vectorized_corpus = vc.FREQV.fit_transform(corpus)
-    if vect == 'HASH':
-        vectoriser = vc.HASHV
-        vectorized_corpus = vc.HASHV.fit_transform(corpus)
-
+        vectoriser = TfidfVectorizer(ngram_range= ngramRange)
+        vectorized_corpus = vectoriser.fit_transform(corpus)
+    
     trainVectors = vectorized_corpus[0:len(trainRecords),:]
     testVectors = vectorized_corpus[len(trainRecords):len(corpus),:]
 
     return (trainVectors, testVectors, vectoriser)
 
-def recordToCorpusText(record : list, 
-                       textIndices : list) -> str:
+def recordToCorpusText(record : list) -> str:
     '''
     Converts a record into one string containing all of the relavant text.
     Helper function for bagOfWords.
@@ -505,9 +445,7 @@ def recordToCorpusText(record : list,
     Parameters
     ----------
     record : list
-        The record to extract corpus text from
-    textIndices : list
-        List of indices of the text fields to be processed.
+        The record to extract corpus text from.
 
     Returns
     -------
@@ -515,6 +453,6 @@ def recordToCorpusText(record : list,
         All of the relavant text in record in one string.
     '''
     text = ''
-    for index in textIndices:
-        text = text + str(record[index])
+    for field in record[0: len(record)]:
+        text = text + str(field)
     return text

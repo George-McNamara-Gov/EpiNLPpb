@@ -24,23 +24,10 @@
 */
 var NAVTREE =
 [
-  [ "EpiNLP Builder", "index.html", [
-    [ "ACT Health Epidemiology NLP Program Builder (EpiNLP Builder)", "md__c_1_2_users_2macgg_2_one_drive_2_desktop_2_epi_n_l_ppb_2_r_e_a_d_m_e.html", [
-      [ "Repository Structure", "md__c_1_2_users_2macgg_2_one_drive_2_desktop_2_epi_n_l_ppb_2_r_e_a_d_m_e.html#autotoc_md1", null ],
-      [ "Dependencies", "md__c_1_2_users_2macgg_2_one_drive_2_desktop_2_epi_n_l_ppb_2_r_e_a_d_m_e.html#autotoc_md2", null ],
-      [ "Set up", "md__c_1_2_users_2macgg_2_one_drive_2_desktop_2_epi_n_l_ppb_2_r_e_a_d_m_e.html#autotoc_md3", [
-        [ "Requirements", "md__c_1_2_users_2macgg_2_one_drive_2_desktop_2_epi_n_l_ppb_2_r_e_a_d_m_e.html#autotoc_md4", null ],
-        [ "Installation", "md__c_1_2_users_2macgg_2_one_drive_2_desktop_2_epi_n_l_ppb_2_r_e_a_d_m_e.html#autotoc_md5", null ]
-      ] ],
-      [ "Usage", "md__c_1_2_users_2macgg_2_one_drive_2_desktop_2_epi_n_l_ppb_2_r_e_a_d_m_e.html#autotoc_md6", null ],
-      [ "Tests", "md__c_1_2_users_2macgg_2_one_drive_2_desktop_2_epi_n_l_ppb_2_r_e_a_d_m_e.html#autotoc_md7", null ],
-      [ "Development", "md__c_1_2_users_2macgg_2_one_drive_2_desktop_2_epi_n_l_ppb_2_r_e_a_d_m_e.html#autotoc_md8", null ],
-      [ "Credits", "md__c_1_2_users_2macgg_2_one_drive_2_desktop_2_epi_n_l_ppb_2_r_e_a_d_m_e.html#autotoc_md9", null ],
-      [ "License", "md__c_1_2_users_2macgg_2_one_drive_2_desktop_2_epi_n_l_ppb_2_r_e_a_d_m_e.html#autotoc_md10", null ]
-    ] ],
-    [ "Packages", "namespaces.html", [
-      [ "Package List", "namespaces.html", "namespaces_dup" ],
-      [ "Package Members", "namespacemembers.html", [
+  [ "EpiNLP Buider", "index.html", [
+    [ "Namespaces", "namespaces.html", [
+      [ "Namespace List", "namespaces.html", "namespaces_dup" ],
+      [ "Namespace Members", "namespacemembers.html", [
         [ "All", "namespacemembers.html", null ],
         [ "Functions", "namespacemembers_func.html", null ],
         [ "Variables", "namespacemembers_vars.html", null ]
@@ -52,8 +39,8 @@ var NAVTREE =
       [ "Class Hierarchy", "hierarchy.html", "hierarchy" ],
       [ "Class Members", "functions.html", [
         [ "All", "functions.html", "functions_dup" ],
-        [ "Functions", "functions_func.html", "functions_func" ],
-        [ "Variables", "functions_vars.html", "functions_vars" ]
+        [ "Functions", "functions_func.html", null ],
+        [ "Variables", "functions_vars.html", null ]
       ] ]
     ] ],
     [ "Files", "files.html", [
@@ -64,14 +51,11 @@ var NAVTREE =
 
 var NAVTREEINDEX =
 [
-"____init_____8py.html",
-"class_epi_n_l_ppb_1_1gui_1_1build_1_1filter_1_1_filter.html#a7c1970cd14b69c9248d9ceab1e750712",
-"class_epi_n_l_ppb_1_1gui_1_1build_1_1info_1_1_info.html#ad909ace323e0fbdcf6a9a7e05919c2a3",
-"class_epi_n_l_ppb_1_1package_1_1_importer_1_1base_1_1_demographic.html#aac11472c346635805718e1e790b6752f",
-"class_epi_n_l_ppb_1_1package_1_1exceptions_1_1_text_level_exception.html",
-"class_epi_n_l_ppb_1_1tests_1_1test__vectorise_1_1_test_vectorise.html#adf6b2f8a665dfc86128fa2f7657b3190",
-"namespace_epi_n_l_ppb_1_1package_1_1vectorise_1_1nltkvectorise.html#a36e33bf86d26d1cd371c2b9087cfe0aa"
+"_importer_2base_8py.html",
+"class_epi_n_l_ppb_1_1package_1_1exceptions_1_1_not_enough_classes_exception.html",
+"class_epi_n_l_ppb_1_1tests_1_1test__nltk_1_1_test_n_l_t_k_vectorise.html#a166e16e3d2c3340335aa0b9f464a33a4"
 ];
 
-var SYNCONMSG = 'click to disable panel synchronisation';
-var SYNCOFFMSG = 'click to enable panel synchronisation';
+var SYNCONMSG = 'click to disable panel synchronization';
+var SYNCOFFMSG = 'click to enable panel synchronization';
+var LISTOFALLMEMBERS = 'List of all members';
