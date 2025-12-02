@@ -1,4 +1,4 @@
-## [1.1.0](https://github.com/andreasonny83/twilio-remote-cli/compare/v0.0.1...v0.0.2) (2019-07-21)
+## [1.1.0](https://github.com/andreasonny83/twilio-remote-cli/compare/v0.0.1...v0.0.2) (02-12-2025)
 
 > This update improves the implementation of data pre-processing and expands the machine learning techniques available. Data import and pre-processing are now implemented with pandas DataFrames instead of Lists. This has changed the format of some NLP constructor arguments as detailed below. New machine learning techniques have been made available to assist in handling imbalanced training data and improving performance. New techniques include under- and over-sampling of training data, regularisation of classifiers, class weighting, and ensemble learning methods.
 
